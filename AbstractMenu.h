@@ -12,7 +12,6 @@ class AbstractMenu
     virtual void paint() const = 0;
     virtual AbstractMenu* processEvents() = 0;
   
-  protected:
     AbstractMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
 
     AbstractMenu* prev;

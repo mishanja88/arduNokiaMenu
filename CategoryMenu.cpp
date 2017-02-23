@@ -8,9 +8,6 @@
 
 extern Adafruit_PCD8544 display;
 
-//static const char prTest[] PROGMEM = "All";
-//static const char prTest2[] = "Allkasdjlajdfasdjfk;kklk;k;;;;;;;;;;;klklklklklklklklklklklklklklkl";
-
 void CategoryMenu::paint() const
 {
   if (g_dirtyWidgets == 0xFF)
@@ -60,8 +57,18 @@ AbstractMenu* CategoryMenu::processEvents()
 {
   BaseMenu::processEvents();
 
-  g_dirtyWidgets = ~0;
-  return ((g_btnEvent > 0xF) && prev) ? prev : this;
+  if (hasPinEvent(PIN_BTN_CANCEL))
+    for (AbstractMenu* menu = this; menu; menu = menu->prev)
+      if (menu->hasParent())
+        return menu->prev; // finally found parent category
+
+  if (hasPinEvent(PIN_SEL_DOWN) && next)
+    return next;
+    
+  if (hasPinEvent(PIN_SEL_UP) && !hasParent())
+    return prev;
+
+  return this;
 }
 
 CategoryMenu::CategoryMenu(const char *_label, AbstractMenu* _prev, bool prevIsParent)

@@ -84,8 +84,13 @@ AbstractMenu* MainMenu::processEvents()
 {
   BaseMenu::processEvents();
 
-  g_dirtyWidgets = ~0;
-  return ((g_btnEvent > 0xF) && child) ? child : this;
+  if(g_diffVol)
+    g_dirtyWidgets |= wMainVol;
+
+  if(hasPinEvent(PIN_BTN_OK) && child)
+      return child;
+
+  return this;
 }
 
 MainMenu::MainMenu()

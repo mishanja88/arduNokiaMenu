@@ -8,7 +8,7 @@ BaseMenu::BaseMenu(AbstractMenu* _prev, bool prevIsParent)
 
 AbstractMenu* BaseMenu::processEvents()
 {
-    g_selPos += g_diffSel;
+    g_selPos += g_diffSel / 2;
         
     g_volPos += g_diffVol;
     

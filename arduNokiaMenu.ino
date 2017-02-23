@@ -109,13 +109,44 @@ void setup() {
   //-------------------------------------------
 
   g_curMenu = new MainMenu;
-  new CategoryMenu(PSTR("Category Menu"), g_curMenu, true);
+  CategoryMenu *firstCategory = new CategoryMenu(PSTR("Category [1]"), g_curMenu, true);
+
+  new CategoryMenu(PSTR("Category [20]"),
+                   new CategoryMenu(PSTR("Category [19]"),
+                                    new CategoryMenu(PSTR("Category [18]"),
+                                        new CategoryMenu(PSTR("Category [17]"),
+                                            new CategoryMenu(PSTR("Category [16]"),
+                                                new CategoryMenu(PSTR("Category [15]"),
+                                                    new CategoryMenu(PSTR("Category [14]"),
+                                                        new CategoryMenu(PSTR("Category [13]"),
+                                                            new CategoryMenu(PSTR("Category [12]"),
+                                                                new CategoryMenu(PSTR("Category [11]"),
+                                                                    new CategoryMenu(PSTR("Category [10]"),
+                                                                        new CategoryMenu(PSTR("Category [9]"),
+                                                                            new CategoryMenu(PSTR("Category [8]"),
+                                                                                new CategoryMenu(PSTR("Category [7]"),
+                                                                                    new CategoryMenu(PSTR("Category [6]"),
+                                                                                        new CategoryMenu(PSTR("Category [5]"),
+                                                                                            new CategoryMenu(PSTR("Category [4]"),
+                                                                                                new CategoryMenu(PSTR("Category [3]"),
+                                                                                                    new CategoryMenu(PSTR("Category [2]"),
+                                                                                                        firstCategory)))))))))))))))))));
+
 
   //-------------------------------------------
   int curFree = freeMemory();
   display.print(curFree);
   printProgmem(PSTR("="));
-  display.print(prevFree - curFree);
+  display.println(prevFree - curFree);
+
+  printProgmem(PSTR("CM="));
+  display.print(sizeof(CategoryMenu));
+  printProgmem(PSTR(",BM="));
+  display.print(sizeof(BaseMenu));
+  printProgmem(PSTR(",MM="));
+  display.print(sizeof(MainMenu));
+  printProgmem(PSTR(",AM="));
+  display.print(sizeof(AbstractMenu));
 
   display.display();
   //-------------------------------------------
@@ -144,9 +175,9 @@ void loop() {
   {
     g_curMenu->paint();
     display.display();
-    
+
     g_dirtyWidgets = 0;
-    
+
     /*if(g_dirtyWidgets)
       g_dirtyWidgets >>= 1;
     else
@@ -155,11 +186,25 @@ void loop() {
   }
   if (g_btnEvent)
   {
+    AbstractMenu *prevMenu = g_curMenu;
+
     g_curMenu = g_curMenu->processEvents();
-    
+
+    if (prevMenu != g_curMenu)
+      g_dirtyWidgets = ~0;
+
+    // debounce
+    if (g_diffSel)
+      delay(100);
+
     g_btnEvent = 0;
+
+    //if (g_diffSel > 4 || g_diffSel < -4)
+
+
     g_diffSel = 0;
     g_diffVol = 0;
+
   }
   //  if(!g_dirtyWidgets)
   //    delay(1000);
