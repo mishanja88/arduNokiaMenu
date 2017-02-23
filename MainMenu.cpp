@@ -5,17 +5,23 @@
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 
-extern Adafruit_PCD8544 display;
-
-void MainMenu::paint() const
+void MainMenu::paint(Adafruit_PCD8544* display) const
 {
-  if(g_dirtyWidgets & wAll)
+  if(g_dirtyWidgets)// & wAll)
   {
-    display.clearDisplay();
-    display.println("Main menu");
+    display->println("Main menu");
+
+    digitalWrite(PIN_LED_OUT, LOW);
+    delay(750);
+    digitalWrite(PIN_LED_OUT, HIGH);
+    delay(750);
+    digitalWrite(PIN_LED_OUT, LOW);
+    delay(750);
+
+    ///display.clearDisplay();
   } 
-  else
-    display.println("done");
+  //else
+    // display.println("done");
 }
 
 AbstractMenu* MainMenu::processEvents()

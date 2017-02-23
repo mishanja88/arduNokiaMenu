@@ -57,7 +57,7 @@ ISR (PCINT2_vect)
   g_oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
-AbstractMenu* g_curMenu;
+AbstractMenu* g_curMenu = nullptr;
 
 void setup() {
   pinMode(PIN_LED_OUT, OUTPUT);
@@ -85,7 +85,10 @@ void setup() {
   g_btnEvent = 0;
 
   delay(100);
-  g_curMenu = new MainMenu;
+//  g_curMenu = new MainMenu;
+
+  if(g_curMenu)
+    blinkDebug(2);
 
   delay(100);
   digitalWrite(PIN_LED_OUT, LOW);
@@ -103,15 +106,19 @@ void blinkDebug(int n)
 }
 
 void loop() {
+  display.setTextSize(1);
+  display.setTextColor(BLACK);
+  display.setCursor(0,0);
+  display.println("Hello, world!");
   blinkDebug(1);
-  
-  g_curMenu->paint();
+  delay(1000);
+  // g_curMenu->paint(&display);
   g_dirtyWidgets = 0;
   blinkDebug(2);
   
-  g_curMenu = g_curMenu->processEvents();
+  // g_curMenu = g_curMenu->processEvents();
   g_btnEvent = 0;
-blinkDebug(3);
+  blinkDebug(3);
   
   // text display tests
   /*display.setTextSize(1);
