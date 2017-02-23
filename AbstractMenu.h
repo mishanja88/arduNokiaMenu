@@ -1,8 +1,6 @@
 #ifndef ABSTRACT_MENU_H
 #define ABSTRACT_MENU_H
 
-class Adafruit_PCD8544;
-
 class AbstractMenu
 {
   public:
@@ -13,7 +11,7 @@ class AbstractMenu
 
     bool hasParent() const;
 
-    virtual void paint(Adafruit_PCD8544* display) const = 0;
+    virtual void paint() const = 0;
     virtual AbstractMenu* processEvents() = 0;
   
   protected:

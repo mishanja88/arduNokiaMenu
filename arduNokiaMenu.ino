@@ -114,7 +114,7 @@ void loop() {
 
   blinkDebug(1);
   delay(1000);
-  g_curMenu->paint(&display);
+  g_curMenu->paint();
   g_dirtyWidgets = 0;
   blinkDebug(2);
   

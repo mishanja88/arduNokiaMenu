@@ -17,7 +17,7 @@ class MainMenu : public AbstractMenu
   
   MainMenu();
   
-  void paint(Adafruit_PCD8544* display) const override;
+  void paint() const override;
   AbstractMenu* processEvents() override;
 };
 

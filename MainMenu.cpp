@@ -5,12 +5,14 @@
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 
-void MainMenu::paint(Adafruit_PCD8544* display) const
+extern Adafruit_PCD8544 display;
+
+void MainMenu::paint() const
 {
   if(g_dirtyWidgets)// & wAll)
   {
-    display->println("Main menu");
-    display->display();
+    display.println("Main menu");
+    display.display();
     
     digitalWrite(PIN_LED_OUT, LOW);
     delay(750);
