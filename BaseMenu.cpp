@@ -1,12 +1,12 @@
 #include "BaseMenu.h"
 #include "SystemState.h"
 
-BaseMenu::BaseMenu(AbstractMenu* _prev, bool prevIsParent)
-: AbstractMenu(_prev, prevIsParent)
+BaseMenu::BaseMenu(const AbstractMenu* _child, const AbstractMenu* _next)
+: AbstractMenu(_child, _next)
 {
 }
 
-AbstractMenu* BaseMenu::processEvents()
+const AbstractMenu* BaseMenu::processEvents() const
 {
     g_selPos += g_diffSel / 2;
         

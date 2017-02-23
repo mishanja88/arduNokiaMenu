@@ -6,10 +6,10 @@
 class BaseMenu : public AbstractMenu
 {
   public:
-    AbstractMenu* processEvents() override;
+    const AbstractMenu* processEvents() const override;
 
   protected:
-    BaseMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
+    BaseMenu(const AbstractMenu* _child, const AbstractMenu* _next);
 };
 
 #endif // BASE_MENU_H

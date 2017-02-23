@@ -6,6 +6,9 @@
 #include "CategoryMenu.h"
 #include "SystemState.h"
 #include "LcdUtil.h"
+#include "MenuStack.h"
+
+const MainMenu PROGMEM pmMain(nullptr);
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
@@ -75,7 +78,7 @@ ISR (PCINT2_vect)
   g_oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
-AbstractMenu* g_curMenu = nullptr;
+const AbstractMenu* g_curMenu = nullptr;
 
 void setup() {
   pinMode(PIN_LED_OUT, OUTPUT);
@@ -107,38 +110,7 @@ void setup() {
   display.print(prevFree);
   printProgmem(PSTR("-"));
   //-------------------------------------------
-
-  g_curMenu = new MainMenu;
-  CategoryMenu *firstCategory = new CategoryMenu(PSTR("Category [1]"), g_curMenu, true);
-
-  // first submenu
-  new CategoryMenu(PSTR("Sub [1-2]"),
-                   new CategoryMenu(PSTR("Sub [1-1]"),
-                                    firstCategory, true));
-
-  // first siblings
-  new CategoryMenu(PSTR("Category [20]"),
-                   new CategoryMenu(PSTR("Category [19]"),
-                                    new CategoryMenu(PSTR("Category [18]"),
-                                        new CategoryMenu(PSTR("Category [17]"),
-                                            new CategoryMenu(PSTR("Category [16]"),
-                                                new CategoryMenu(PSTR("Category [15]"),
-                                                    new CategoryMenu(PSTR("Category [14]"),
-                                                        new CategoryMenu(PSTR("Category [13]"),
-                                                            new CategoryMenu(PSTR("Category [12]"),
-                                                                new CategoryMenu(PSTR("Category [11]"),
-                                                                    new CategoryMenu(PSTR("Category [10]"),
-                                                                        new CategoryMenu(PSTR("Category [9]"),
-                                                                            new CategoryMenu(PSTR("Category [8]"),
-                                                                                new CategoryMenu(PSTR("Category [7]"),
-                                                                                    new CategoryMenu(PSTR("Category [6]"),
-                                                                                        new CategoryMenu(PSTR("Category [5]"),
-                                                                                            new CategoryMenu(PSTR("Category [4]"),
-                                                                                                new CategoryMenu(PSTR("Category [3]"),
-                                                                                                    new CategoryMenu(PSTR("Category [2]"),
-                                                                                                        firstCategory)))))))))))))))))));
-
-
+  g_curMenu = &pmMain;
   //-------------------------------------------
   int curFree = freeMemory();
   display.print(curFree);
@@ -157,6 +129,8 @@ void setup() {
   display.display();
   //-------------------------------------------
 
+  blinkDebug(5);
+  delay(1000);
   if (g_curMenu)
     blinkDebug(2);
 
@@ -165,7 +139,7 @@ void setup() {
 }
 
 void loop() {
-  // blinkDebug(1);
+  blinkDebug(1);
   if (g_dirtyWidgets)
   {
     g_curMenu->paint();
@@ -181,7 +155,7 @@ void loop() {
   }
   if (g_btnEvent)
   {
-    AbstractMenu *prevMenu = g_curMenu;
+    const AbstractMenu* prevMenu = g_curMenu;
 
     g_curMenu = g_curMenu->processEvents();
 

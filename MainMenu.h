@@ -19,10 +19,10 @@ class MainMenu : public BaseMenu
     wMenuBtn = (1 << 7)
   };
     
-  MainMenu();
+  MainMenu(const AbstractMenu* _child);
   
   void paint() const override;
-  AbstractMenu* processEvents() override;
+  const AbstractMenu* processEvents() const override;
 };
 
 #endif // MAIN_MENU_H

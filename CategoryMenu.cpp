@@ -5,6 +5,7 @@
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 #include "LcdUtil.h"
+#include "MenuStack.h"
 
 extern Adafruit_PCD8544 display;
 
@@ -53,32 +54,26 @@ void CategoryMenu::paint() const
   // display.println("done");
 }
 
-AbstractMenu* CategoryMenu::processEvents()
+const AbstractMenu* CategoryMenu::processEvents() const
 {
   BaseMenu::processEvents();
 
   if (hasPinEvent(PIN_BTN_CANCEL))
-    for (AbstractMenu* menu = this; menu; menu = menu->prev)
-      if (menu->hasParent())
-        return menu->prev; // finally found parent category
+    return g_menuStack.pop();
 
   if (hasPinEvent(PIN_BTN_OK) && child)
-  {
- //   blinkDebug(3);
-  //  delay(500);
     return child;
-  }
 
   if (hasPinEvent(PIN_SEL_DOWN) && next)
     return next;
 
-  if (hasPinEvent(PIN_SEL_UP) && !hasParent())
-    return prev;
+  if (hasPinEvent(PIN_SEL_UP))
+    return g_menuStack.getPrevFor(this);
 
   return this;
 }
 
-CategoryMenu::CategoryMenu(const char *_label, AbstractMenu* _prev, bool prevIsParent)
-  : BaseMenu(_prev, prevIsParent), label(_label)
+CategoryMenu::CategoryMenu(const char *_label, const AbstractMenu* _child, const AbstractMenu* _next)
+  : BaseMenu(_child, _next), label(_label)
 {
 }

@@ -1,30 +1,7 @@
 #include "AbstractMenu.h"
 
-AbstractMenu::AbstractMenu(AbstractMenu* _prev, bool prevIsParent)
-  : prev(_prev), child(nullptr), next(nullptr)
+AbstractMenu::AbstractMenu(const AbstractMenu* _child, const AbstractMenu* _next)
+  : child(_child), next(_next)
 {
-  if (prev)
-  {
-    if (prevIsParent)
-      prev->setChild(this);
-    else
-      prev->setNext(this);
-  }
-}
-
-bool AbstractMenu::hasParent() const
-{
-  return prev && prev->child == this;
-}
-
-
-void AbstractMenu::setChild(AbstractMenu* ptr)
-{
-  child = ptr;
-}
-
-void AbstractMenu::setNext(AbstractMenu* ptr)
-{
-  next = ptr;
 }
 

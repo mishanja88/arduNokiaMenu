@@ -5,7 +5,7 @@ class AbstractMenu
 {
   public:
     virtual void paint() const = 0;
-    virtual AbstractMenu* processEvents() const = 0;
+    virtual const AbstractMenu* processEvents() const = 0;
   
     AbstractMenu(const AbstractMenu* _child, const AbstractMenu* _next);
 

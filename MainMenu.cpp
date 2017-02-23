@@ -8,10 +8,6 @@
 
 extern Adafruit_PCD8544 display;
 
-//static const char prTest[] PROGMEM = "All";
-//static const char prTest2[] = "Allkasdjlajdfasdjfk;kklk;k;;;;;;;;;;;klklklklklklklklklklklklklklkl";
-
-
 #define D_W 84
 #define D_H 48
 #define HEADER_H 10
@@ -80,7 +76,7 @@ void MainMenu::paint() const
   // display.println("done");
 }
 
-AbstractMenu* MainMenu::processEvents()
+const AbstractMenu* MainMenu::processEvents() const
 {
   BaseMenu::processEvents();
 
@@ -93,6 +89,7 @@ AbstractMenu* MainMenu::processEvents()
   return this;
 }
 
-MainMenu::MainMenu()
+MainMenu::MainMenu(const AbstractMenu* _child)
+  : BaseMenu(_child, nullptr)
 {
 }

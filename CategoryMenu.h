@@ -19,10 +19,10 @@ class CategoryMenu : public BaseMenu
     wMenuBtn = (1 << 7)
   };
     
-  CategoryMenu(const char *_label, AbstractMenu* _prev = nullptr, bool prevIsParent = false);
+  CategoryMenu(const char *_label, const AbstractMenu* _child, const AbstractMenu* _next);
   
   void paint() const override;
-  AbstractMenu* processEvents() override;
+  const AbstractMenu* processEvents() const override;
 
   protected:
     const char *label;
