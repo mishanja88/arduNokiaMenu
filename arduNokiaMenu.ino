@@ -1,9 +1,11 @@
+#include <MemoryFree.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include "MainMenu.h"
 #include "CategoryMenu.h"
 #include "SystemState.h"
+#include "LcdUtil.h"
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
@@ -73,7 +75,7 @@ void setup() {
   // Display init
   display.begin();
   display.clearDisplay();
-  display.display();
+  
   display.setContrast(60);
   analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
@@ -85,15 +87,28 @@ void setup() {
   g_dirtyWidgets = 0xFF;
   g_btnEvent = 0;
 
-  delay(100);
-  g_curMenu = new MainMenu;
+// -------------------- measure amount of RAM
+  int prevFree = freeMemory();
+  display.print(prevFree);
+  printProgmem(PSTR("-"));
+//-------------------------------------------
 
+  g_curMenu = new MainMenu;
   new CategoryMenu(PSTR("Category Menu"), g_curMenu, true);
 
+//-------------------------------------------
+  int curFree = freeMemory();
+  display.print(curFree);
+  printProgmem(PSTR("="));
+  display.print(prevFree - curFree);
+
+  display.display();
+//-------------------------------------------
+  
   if(g_curMenu)
     blinkDebug(2);
 
-  delay(100);
+  delay(3000);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 
