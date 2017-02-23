@@ -25,5 +25,6 @@ extern volatile unsigned char g_btnEvent;
 extern volatile unsigned char g_oldPORTD;
 
 bool hasPinEvent(PinMappings pin);
+void blinkDebug(int n);
 
 #endif // SYSTEM_STATE_H

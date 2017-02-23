@@ -62,9 +62,16 @@ AbstractMenu* CategoryMenu::processEvents()
       if (menu->hasParent())
         return menu->prev; // finally found parent category
 
+  if (hasPinEvent(PIN_BTN_OK) && child)
+  {
+ //   blinkDebug(3);
+  //  delay(500);
+    return child;
+  }
+
   if (hasPinEvent(PIN_SEL_DOWN) && next)
     return next;
-    
+
   if (hasPinEvent(PIN_SEL_UP) && !hasParent())
     return prev;
 

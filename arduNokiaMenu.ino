@@ -111,6 +111,12 @@ void setup() {
   g_curMenu = new MainMenu;
   CategoryMenu *firstCategory = new CategoryMenu(PSTR("Category [1]"), g_curMenu, true);
 
+  // first submenu
+  new CategoryMenu(PSTR("Sub [1-2]"),
+                   new CategoryMenu(PSTR("Sub [1-1]"),
+                                    firstCategory, true));
+
+  // first siblings
   new CategoryMenu(PSTR("Category [20]"),
                    new CategoryMenu(PSTR("Category [19]"),
                                     new CategoryMenu(PSTR("Category [18]"),
@@ -158,19 +164,8 @@ void setup() {
   digitalWrite(PIN_LED_OUT, LOW);
 }
 
-void blinkDebug(int n)
-{
-  for (int i = 0; i < n; ++i)
-  {
-    digitalWrite(PIN_LED_OUT, HIGH);
-    delay(50);
-    digitalWrite(PIN_LED_OUT, LOW);
-    delay(50);
-  }
-}
-
 void loop() {
-  blinkDebug(1);
+  // blinkDebug(1);
   if (g_dirtyWidgets)
   {
     g_curMenu->paint();
@@ -194,13 +189,10 @@ void loop() {
       g_dirtyWidgets = ~0;
 
     // debounce
-    if (g_diffSel)
+    if (g_btnEvent > 0x3)
       delay(100);
 
     g_btnEvent = 0;
-
-    //if (g_diffSel > 4 || g_diffSel < -4)
-
 
     g_diffSel = 0;
     g_diffVol = 0;
