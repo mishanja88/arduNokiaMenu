@@ -30,7 +30,8 @@ ISR (PCINT2_vect)
   // g_encoderCheck = g_curPORTD ^ (g_curPORTD >> 1);
 
   // Event set only on button release
-  g_btnEvent |= (g_btnPush & ~g_curPORTD & EVENT_BTN_MASK);
+  g_btnEvent |= (g_btnPush & ~g_curPORTD);
+  g_btnEvent &= EVENT_BTN_MASK;
 
   // Checking encoder rotation
   if (g_btnPush & EVENT_VOL_MASK)
@@ -40,9 +41,13 @@ ISR (PCINT2_vect)
     bool b = g_curPORTD & 0x2;
 
     if (ta ^ (a == b))
+    {
       g_diffVol--;
+    }
     else
+    {
       g_diffVol++;
+    }
   }
 
   if (g_btnPush & EVENT_SEL_MASK)
@@ -56,6 +61,16 @@ ISR (PCINT2_vect)
     else
       g_diffSel++;
   }
+
+  if (g_diffVol < 0)
+    g_btnEvent |= 1 << PIN_VOL_DOWN;
+  else if (g_diffVol)
+    g_btnEvent |= 1 << PIN_VOL_UP;
+
+  if (g_diffSel < 0)
+    g_btnEvent |= 1 << PIN_SEL_DOWN;
+  else if (g_diffSel)
+    g_btnEvent |= 1 << PIN_SEL_UP;
 
   g_oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
@@ -75,7 +90,7 @@ void setup() {
   // Display init
   display.begin();
   display.clearDisplay();
-  
+
   display.setContrast(60);
   analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
@@ -87,25 +102,25 @@ void setup() {
   g_dirtyWidgets = 0xFF;
   g_btnEvent = 0;
 
-// -------------------- measure amount of RAM
+  // -------------------- measure amount of RAM
   int prevFree = freeMemory();
   display.print(prevFree);
   printProgmem(PSTR("-"));
-//-------------------------------------------
+  //-------------------------------------------
 
   g_curMenu = new MainMenu;
   new CategoryMenu(PSTR("Category Menu"), g_curMenu, true);
 
-//-------------------------------------------
+  //-------------------------------------------
   int curFree = freeMemory();
   display.print(curFree);
   printProgmem(PSTR("="));
   display.print(prevFree - curFree);
 
   display.display();
-//-------------------------------------------
-  
-  if(g_curMenu)
+  //-------------------------------------------
+
+  if (g_curMenu)
     blinkDebug(2);
 
   delay(3000);
@@ -117,30 +132,38 @@ void blinkDebug(int n)
   for (int i = 0; i < n; ++i)
   {
     digitalWrite(PIN_LED_OUT, HIGH);
-    delay(75);
+    delay(50);
     digitalWrite(PIN_LED_OUT, LOW);
-    delay(75);
+    delay(50);
   }
 }
 
 void loop() {
   blinkDebug(1);
-  
-  g_curMenu->paint();
-  g_dirtyWidgets = 0;
-  /*if(g_dirtyWidgets)
-    g_dirtyWidgets >>= 1;
-  else
-    g_dirtyWidgets = 0xFF;
-  */
-  display.display();
+  if (g_dirtyWidgets)
+  {
+    g_curMenu->paint();
+    display.display();
+    
+    g_dirtyWidgets = 0;
+    
+    /*if(g_dirtyWidgets)
+      g_dirtyWidgets >>= 1;
+    else
+      g_dirtyWidgets = 0xFF;
+    */
+  }
+  if (g_btnEvent)
+  {
+    g_curMenu = g_curMenu->processEvents();
+    
+    g_btnEvent = 0;
+    g_diffSel = 0;
+    g_diffVol = 0;
+  }
+  //  if(!g_dirtyWidgets)
+  //    delay(1000);
 
-  g_curMenu = g_curMenu->processEvents();
-  g_btnEvent = 0;
-
-//  if(!g_dirtyWidgets)
-//    delay(1000);
-  
   // text display tests
   /*display.setTextSize(1);
   display.setTextColor(BLACK);

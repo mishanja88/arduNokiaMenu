@@ -11,8 +11,8 @@
 #define EVENT_SEL_MASK 0x0C
 
 //TODO: remove---------------
-extern volatile int selPos;
-extern volatile int volPos;
+extern volatile int g_selPos;
+extern volatile int g_volPos;
 //---------------------------
 
 // Each bit corresponds to screen widget

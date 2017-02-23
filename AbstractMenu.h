@@ -4,8 +4,6 @@
 class AbstractMenu
 {
   public:
-    AbstractMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
-
     void setChild(AbstractMenu* ptr);
     void setNext(AbstractMenu* ptr);
 
@@ -15,6 +13,8 @@ class AbstractMenu
     virtual AbstractMenu* processEvents() = 0;
   
   protected:
+    AbstractMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
+
     AbstractMenu* prev;
     AbstractMenu* child;
     AbstractMenu* next;

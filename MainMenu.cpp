@@ -18,6 +18,8 @@ void MainMenu::paint() const
   {
     display.clearDisplay();
     printProgmem(PSTR("Main menu"));
+    display.println(g_selPos);
+
   }
 
   if (g_dirtyWidgets & wMenuBtn)
@@ -28,6 +30,7 @@ void MainMenu::paint() const
   if (g_dirtyWidgets & wMainVol)
   {
     printProgmem(PSTR("wMainVol"));
+    display.println(g_volPos);
   }
   
   if (g_dirtyWidgets & wMicVol)
@@ -58,9 +61,10 @@ void MainMenu::paint() const
 
 AbstractMenu* MainMenu::processEvents()
 {
-  if(g_btnEvent)
-    g_dirtyWidgets = ~0;
-  return (g_btnEvent && child) ? child : this;
+  BaseMenu::processEvents();
+  
+  g_dirtyWidgets = ~0;
+  return ((g_btnEvent > 0xF) && child) ? child : this;
 }
 
 MainMenu::MainMenu()

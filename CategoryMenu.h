@@ -1,9 +1,9 @@
 #ifndef CATEGORY_MENU_H
 #define CATEGORY_MENU_H
 
-#include "AbstractMenu.h"
+#include "BaseMenu.h"
 
-class CategoryMenu : public AbstractMenu
+class CategoryMenu : public BaseMenu
 {
   public:
   enum Widgets

@@ -1,7 +1,7 @@
 #include "SystemState.h"
 
-volatile int selPos = 0;
-volatile int volPos = 0;
+volatile int g_selPos = 0;
+volatile int g_volPos = 0;
 
 volatile int g_diffSel = 0;
 volatile int g_diffVol = 0;

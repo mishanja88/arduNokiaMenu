@@ -1,9 +1,9 @@
 #ifndef MAIN_MENU_H
 #define MAIN_MENU_H
 
-#include "AbstractMenu.h"
+#include "BaseMenu.h"
 
-class MainMenu : public AbstractMenu
+class MainMenu : public BaseMenu
 {
   public:
   enum Widgets
