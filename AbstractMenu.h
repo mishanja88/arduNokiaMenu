@@ -4,7 +4,7 @@
 class AbstractMenu
 {
   public:
-    AbstractMenu(AbstractMenu* prev = nullptr, bool prevIsParent = false);
+    AbstractMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
 
     void setChild(AbstractMenu* ptr);
     void setNext(AbstractMenu* ptr);

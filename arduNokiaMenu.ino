@@ -2,37 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include "MainMenu.h"
-
-// Button event mask
-#define EVENT_BTN_MASK 0xF0
-
-// Encoder event mask
-#define EVENT_SEL_MASK 0x03
-#define EVENT_VOL_MASK 0x0C
-
-enum PinMappings
-{
-//-------- Encoders ---------
-  PIN_SEL_DOWN = 0,
-  PIN_SEL_UP = 1,
-
-  PIN_VOL_DOWN = 2,
-  PIN_VOL_UP = 3,
-//---------------------------
-
-  PIN_BTN_OK = 4,
-  PIN_BTN_CANCEL = 4,
-
-  PIN_BTN_HOLD = 6,
-
-  PIN_RESERVED1 = 7,
-
-  PIN_DISPLAY_DC = 8,
-  PIN_DISPLAY_BACKLIGHT = 9,
-
-  PIN_LED_OUT = 16, // A2
-  PIN_DISPLAY_RESET = 17 // A3
-};
+#include "SystemState.h"
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
@@ -40,22 +10,9 @@ enum PinMappings
 // pin 8 - Data/Command select (D/C)
 // LCD chip select (CS) - to ground (single display)
 // pin 17 - LCD reset (RST)
-Adafruit_PCD8544 display = Adafruit_PCD8544(8, 0, 17);
+Adafruit_PCD8544 display = Adafruit_PCD8544(PIN_DISPLAY_DC, 0, PIN_DISPLAY_RESET);
 // Note with hardware SPI MISO and SS pins aren't used but will still be read
 // and written to during SPI transfer.  Be careful sharing these pins!
-
-
-//TODO: ----- move in proper location
-int volPos = 0;
-int selPos = 0;
-
-volatile int g_diffVol = 0;
-volatile int g_diffSel = 0;
-
-volatile int g_btnEvent = 0;
-volatile int g_oldPORTD = 0;
-// ----------------------------------
-
 
 ISR (PCINT2_vect)
 {
