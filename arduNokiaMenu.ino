@@ -19,8 +19,8 @@ ISR (PCINT2_vect)
   static int g_btnPush = 0;
   static int g_encoderCheck = 0;
   static int g_curPORTD = 0;
-  static int g_sel = 0;
   static int g_vol = 0;
+  static int g_Sel = 0;
 
   g_curPORTD = PIND;
   g_btnPush = g_oldPORTD ^ g_curPORTD;
@@ -30,28 +30,28 @@ ISR (PCINT2_vect)
   g_btnEvent |= (g_btnPush & ~g_curPORTD & EVENT_BTN_MASK);
 
   // Checking encoder rotation
-  if (g_btnPush & EVENT_SEL_MASK)
+  if (g_btnPush & EVENT_VOL_MASK)
   {
     bool ta = !(g_btnPush & 0x1);
     bool a = g_curPORTD & 0x1;
     bool b = g_curPORTD & 0x2;
 
     if (ta ^ (a == b))
-      g_diffSel--;
+      g_diffVol--;
     else
-      g_diffSel++;
+      g_diffVol++;
   }
 
-  if (g_btnPush & EVENT_VOL_MASK)
+  if (g_btnPush & EVENT_SEL_MASK)
   {
     bool ta = !(g_btnPush & 0x4);
     bool a = g_curPORTD & 0x4;
     bool b = g_curPORTD & 0x8;
 
     if (ta ^ (a == b))
-      g_diffVol--;
+      g_diffSel--;
     else
-      g_diffVol++;
+      g_diffSel++;
   }
 
   g_oldPORTD = g_curPORTD;
@@ -102,11 +102,11 @@ void loop() {
   for (int i = 0; i < PIN_DISPLAY_DC; ++i)
     display.fillRect(10 + (i << 2), 16, 3, 3, g_btnEvent & (1 << i));
 
-  volPos += g_diffVol;
-  g_diffVol = 0;
-
   selPos += g_diffSel;
   g_diffSel = 0;
+
+  volPos += g_diffVol;
+  g_diffVol = 0;
 
   g_btnEvent = 0;
 
