@@ -1,38 +1,24 @@
-/*********************************************************************
-This is an example sketch for our Monochrome Nokia 5110 LCD Displays
-
-  Pick one up today in the adafruit shop!
-  ------> http://www.adafruit.com/products/338
-
-These displays use SPI to communicate, 4 or 5 pins are required to
-interface
-
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
-
-Written by Limor Fried/Ladyada  for Adafruit Industries.
-BSD license, check license.txt for more information
-All text above, and the splash screen must be included in any redistribution
-*********************************************************************/
-
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include "MainMenu.h"
 
+// Button event mask
 #define EVENT_BTN_MASK 0xF0
 
+// Encoder event mask
 #define EVENT_SEL_MASK 0x03
 #define EVENT_VOL_MASK 0x0C
 
 enum PinMappings
 {
+//-------- Encoders ---------
   PIN_SEL_DOWN = 0,
   PIN_SEL_UP = 1,
 
   PIN_VOL_DOWN = 2,
   PIN_VOL_UP = 3,
+//---------------------------
 
   PIN_BTN_OK = 4,
   PIN_BTN_CANCEL = 4,
@@ -44,34 +30,31 @@ enum PinMappings
   PIN_DISPLAY_DC = 8,
   PIN_DISPLAY_BACKLIGHT = 9,
 
-  PIN_LED_OUT = 16,
-  PIN_DISPLAY_RESET = 17
+  PIN_LED_OUT = 16, // A2
+  PIN_DISPLAY_RESET = 17 // A3
 };
-
-
-// Software SPI (slower updates, more flexible pin options):
-// pin 7 - Serial clock out (SCLK)
-// pin 6 - Serial data out (DIN)
-// pin 5 - Data/Command select (D/C)
-// pin 4 - LCD chip select (CS)
-// pin 3 - LCD reset (RST)
-//Adafruit_PCD8544 display = Adafruit_PCD8544(13, 11, 8, 10, 9);
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
 // MOSI is LCD DIN - this is pin 11 on an Arduino Uno
-// pin 5 - Data/Command select (D/C)
-// pin 4 - LCD chip select (CS)
-// pin 3 - LCD reset (RST)
+// pin 8 - Data/Command select (D/C)
+// LCD chip select (CS) - to ground (single display)
+// pin 17 - LCD reset (RST)
 Adafruit_PCD8544 display = Adafruit_PCD8544(8, 0, 17);
 // Note with hardware SPI MISO and SS pins aren't used but will still be read
 // and written to during SPI transfer.  Be careful sharing these pins!
 
-volatile int g_btnEvent = 0;
-volatile int g_oldPORTD = 0;
+
+//TODO: ----- move in proper location
+int volPos = 0;
+int selPos = 0;
 
 volatile int g_diffVol = 0;
 volatile int g_diffSel = 0;
+
+volatile int g_btnEvent = 0;
+volatile int g_oldPORTD = 0;
+// ----------------------------------
 
 
 ISR (PCINT2_vect)
@@ -86,10 +69,10 @@ ISR (PCINT2_vect)
   g_btnPush = g_oldPORTD ^ g_curPORTD;
   // g_encoderCheck = g_curPORTD ^ (g_curPORTD >> 1);
 
-  // только отпускание кнопок
+  // Event set only on button release
   g_btnEvent |= (g_btnPush & ~g_curPORTD & EVENT_BTN_MASK);
 
-  // проверка смены направления энкодеров
+  // Checking encoder rotation
   if (g_btnPush & EVENT_SEL_MASK)
   {
     bool ta = !(g_btnPush & 0x1);
@@ -119,37 +102,27 @@ ISR (PCINT2_vect)
 
 
 void setup() {
-
-  for (int i = 0; i <= PIN_DISPLAY_DC; ++i)
-  {
-    pinMode(i, INPUT_PULLUP);
-  }
-  g_oldPORTD = PORTD;
-
   pinMode(PIN_LED_OUT, OUTPUT);
   digitalWrite(PIN_LED_OUT, LOW);
 
-  // Attach an interrupt to the ISR vector
-  //attachInterrupt(0, pin_ISR, CHANGE);
+  // Initializing all ports 0 - 7
+  // (serial is not used)
+  for (int i = 0; i <= PIN_DISPLAY_DC; ++i)
+    pinMode(i, INPUT_PULLUP);
+  g_oldPORTD = PORTD;
 
-  // инициализация и очистка дисплея
+  // Display init
   display.begin();
   display.clearDisplay();
   display.display();
+  display.setContrast(60);
+  analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
-
-  display.setContrast(60); // установка контраста
-  analogWrite(9, 0);
-
-  // pin change interrupt (example for D4)
-  PCMSK2 |= bit (PCINT16) | bit (PCINT17) | bit (PCINT18) | bit (PCINT19) | bit (PCINT20) | bit (PCINT21) | bit (PCINT22) | bit (PCINT23);  // want pin 4
+  // pin change interrupt
+  PCMSK2 |= 0xFF; // All pins from 0 to 7 (from PCINT16 to PCINT23)
   PCIFR  |= bit (PCIF2);    // clear any outstanding interrupts
   PCICR  |= bit (PCIE2);    // enable pin change interrupts for D0 to D7
 }
-
-
-int volPos = 0;
-int selPos = 0;
 
 void loop() {
   // text display tests
@@ -162,33 +135,12 @@ void loop() {
   display.setTextSize(2);
   display.setTextColor(BLACK);
   display.print("0x"); display.println(PIND, HEX);
-
-
-  int rPIND;
-  int diffPinD;
-
-  rPIND = PIND;
-  diffPinD = rPIND ^ g_oldPORTD;
-
-  if (diffPinD)
-  {
-    g_oldPORTD = rPIND;
-    for (int i = 0; i <= 7; ++i)
-    {
-      int offset = (1 << i);
-      if (diffPinD & offset)
-      {
-        display.fillRect(i * 10, 10, 8, 8, rPIND & offset);
-      }
-    }
-  }
   */
 
   //digitalWrite(PIN_LED_OUT, digitalRead(PIN_BTN_HOLD));
 
   for (int i = 0; i < PIN_DISPLAY_DC; ++i)
     display.fillRect(10 + (i << 2), 8, 3, 3, digitalRead(i));
-
 
   for (int i = 0; i < PIN_DISPLAY_DC; ++i)
     display.fillRect(10 + (i << 2), 16, 3, 3, g_btnEvent & (1 << i));
