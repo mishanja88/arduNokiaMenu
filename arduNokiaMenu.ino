@@ -2,6 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include "MainMenu.h"
+#include "CategoryMenu.h"
 #include "SystemState.h"
 
 // Hardware SPI (faster, but must use certain hardware pins):
@@ -87,6 +88,8 @@ void setup() {
   delay(100);
   g_curMenu = new MainMenu;
 
+  new CategoryMenu(g_curMenu, true);
+
   if(g_curMenu)
     blinkDebug(2);
 
@@ -109,17 +112,19 @@ void loop() {
   blinkDebug(1);
   
   g_curMenu->paint();
-  if(g_dirtyWidgets)
+  g_dirtyWidgets = 0;
+  /*if(g_dirtyWidgets)
     g_dirtyWidgets >>= 1;
   else
     g_dirtyWidgets = 0xFF;
-  
+  */
   display.display();
 
   g_curMenu = g_curMenu->processEvents();
   g_btnEvent = 0;
 
-  delay(1000);
+  if(!g_dirtyWidgets)
+    delay(1000);
   
   // text display tests
   /*display.setTextSize(1);

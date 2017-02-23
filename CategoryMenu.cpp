@@ -1,4 +1,4 @@
-#include "MainMenu.h"
+#include "CategoryMenu.h"
 
 #include <SPI.h>
 #include <Adafruit_GFX.h>
@@ -11,13 +11,12 @@ extern Adafruit_PCD8544 display;
 //static const char prTest[] PROGMEM = "All";
 //static const char prTest2[] = "Allkasdjlajdfasdjfk;kklk;k;;;;;;;;;;;klklklklklklklklklklklklklklkl";
 
-void MainMenu::paint() const
+void CategoryMenu::paint() const
 {
-
   if (g_dirtyWidgets == 0xFF)
   {
-    display.clearDisplay();
-    printProgmem(PSTR("Main menu"));
+     display.clearDisplay();
+    printProgmem(PSTR("Category Menu"));
   }
 
   if (g_dirtyWidgets & wMenuBtn)
@@ -56,13 +55,14 @@ void MainMenu::paint() const
   // display.println("done");
 }
 
-AbstractMenu* MainMenu::processEvents()
+AbstractMenu* CategoryMenu::processEvents()
 {
   if(g_btnEvent)
     g_dirtyWidgets = ~0;
-  return (g_btnEvent && child) ? child : this;
+  return (g_btnEvent && prev) ? prev : this;
 }
 
-MainMenu::MainMenu()
+CategoryMenu::CategoryMenu(AbstractMenu* _prev, bool prevIsParent)
+: AbstractMenu(_prev, prevIsParent)
 {
 }
