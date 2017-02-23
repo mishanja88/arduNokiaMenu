@@ -11,18 +11,18 @@
 #define EVENT_SEL_MASK 0x0C
 
 //TODO: remove---------------
-extern int selPos;
-extern int volPos;
+extern volatile int selPos;
+extern volatile int volPos;
 //---------------------------
 
 // Each bit corresponds to screen widget
-extern int g_dirtyWidgets;
+extern volatile unsigned char g_dirtyWidgets;
 
 extern volatile int g_diffSel;
 extern volatile int g_diffVol;
 
-extern volatile int g_btnEvent;
-extern volatile int g_oldPORTD;
+extern volatile unsigned char g_btnEvent;
+extern volatile unsigned char g_oldPORTD;
 
 bool hasPinEvent(PinMappings pin);
 

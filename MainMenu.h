@@ -7,25 +7,22 @@ class MainMenu : public AbstractMenu
 {
   public:
   enum Widgets
-  {   
-    wPresetName = (1 << 11),
-    wBattery = (1 << 12),
-    wVolume = (1 << 13),
-    wMenuBtn = (1 << 14),
-    wAll = (1 << 15), 
+  {
+    wEqLow = (1 << 0),
+    wEqMid = (1 << 1),
+    qEqHigh = (1 << 2),
+    
+    wPresetName = (1 << 3),
+    wBattery = (1 << 4),
+    wMainVol = (1 << 5),
+    wMicVol = (1 << 6),
+    wMenuBtn = (1 << 7)
   };
-  
+    
   MainMenu();
   
   void paint() const override;
   AbstractMenu* processEvents() override;
-};
-
-class Test : public MainMenu
-{
-  public:
-  Test()
-  {}
 };
 
 #endif // MAIN_MENU_H

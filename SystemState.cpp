@@ -1,15 +1,15 @@
 #include "SystemState.h"
 
-int selPos = 0;
-int volPos = 0;
+volatile int selPos = 0;
+volatile int volPos = 0;
 
 volatile int g_diffSel = 0;
 volatile int g_diffVol = 0;
 
-volatile int g_btnEvent = 0;
-volatile int g_oldPORTD = 0;
+volatile unsigned char g_btnEvent = 0;
+volatile unsigned char g_oldPORTD = 0;
 
-int g_dirtyWidgets = 0xFF;
+volatile unsigned char g_dirtyWidgets = 0xFF;
 
 bool hasPinEvent(PinMappings pin)
 {

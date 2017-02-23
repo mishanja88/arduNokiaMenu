@@ -106,21 +106,20 @@ void blinkDebug(int n)
 }
 
 void loop() {
-  display.setTextSize(1);
-  display.setTextColor(BLACK);
-  display.setCursor(0,0);
-  display.println("Hello, world!");
+  blinkDebug(1);
+  
+  g_curMenu->paint();
+  if(g_dirtyWidgets)
+    g_dirtyWidgets >>= 1;
+  else
+    g_dirtyWidgets = 0xFF;
+  
   display.display();
 
-  blinkDebug(1);
-  delay(1000);
-  g_curMenu->paint();
-  g_dirtyWidgets = 0;
-  blinkDebug(2);
-  
   g_curMenu = g_curMenu->processEvents();
   g_btnEvent = 0;
-  blinkDebug(3);
+
+  delay(1000);
   
   // text display tests
   /*display.setTextSize(1);
