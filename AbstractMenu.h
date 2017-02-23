@@ -4,19 +4,13 @@
 class AbstractMenu
 {
   public:
-    void setChild(AbstractMenu* ptr);
-    void setNext(AbstractMenu* ptr);
-
-    bool hasParent() const;
-
     virtual void paint() const = 0;
-    virtual AbstractMenu* processEvents() = 0;
+    virtual AbstractMenu* processEvents() const = 0;
   
-    AbstractMenu(AbstractMenu* _prev = nullptr, bool prevIsParent = false);
+    AbstractMenu(const AbstractMenu* _child, const AbstractMenu* _next);
 
-    AbstractMenu* prev;
-    AbstractMenu* child;
-    AbstractMenu* next;
+    const AbstractMenu* child;
+    const AbstractMenu* next;
 };
 
 #endif // ABSTRACT_MENU_H
