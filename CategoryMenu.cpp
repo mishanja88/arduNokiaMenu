@@ -15,7 +15,7 @@ void CategoryMenu::paint() const
 {
   if (g_dirtyWidgets == 0xFF)
   {
-     display.clearDisplay();
+    display.clearDisplay();
     printProgmem(label);
   }
 
@@ -29,7 +29,7 @@ void CategoryMenu::paint() const
   {
     printProgmem(PSTR("wMainVol"));
   }
-  
+
   if (g_dirtyWidgets & wMicVol)
   {
     printProgmem(PSTR("wMicVol"));
@@ -59,12 +59,12 @@ void CategoryMenu::paint() const
 AbstractMenu* CategoryMenu::processEvents()
 {
   BaseMenu::processEvents();
-  
+
   g_dirtyWidgets = ~0;
   return ((g_btnEvent > 0xF) && prev) ? prev : this;
 }
 
 CategoryMenu::CategoryMenu(const char *_label, AbstractMenu* _prev, bool prevIsParent)
-: BaseMenu(_prev, prevIsParent), label(_label)
+  : BaseMenu(_prev, prevIsParent), label(_label)
 {
 }
