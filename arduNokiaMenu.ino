@@ -88,7 +88,7 @@ void setup() {
   delay(100);
   g_curMenu = new MainMenu;
 
-  new CategoryMenu(g_curMenu, true);
+  new CategoryMenu(PSTR("Category Menu"), g_curMenu, true);
 
   if(g_curMenu)
     blinkDebug(2);
@@ -123,8 +123,8 @@ void loop() {
   g_curMenu = g_curMenu->processEvents();
   g_btnEvent = 0;
 
-  if(!g_dirtyWidgets)
-    delay(1000);
+//  if(!g_dirtyWidgets)
+//    delay(1000);
   
   // text display tests
   /*display.setTextSize(1);
