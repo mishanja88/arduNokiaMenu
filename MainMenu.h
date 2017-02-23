@@ -6,6 +6,15 @@
 class MainMenu : public AbstractMenu
 {
   public:
+  enum Widgets
+  {   
+    wPresetName = (1 << 11),
+    wBattery = (1 << 12),
+    wVolume = (1 << 13),
+    wMenuBtn = (1 << 14),
+    wAll = (1 << 15), 
+  };
+  
   MainMenu();
   
   void paint() const override;

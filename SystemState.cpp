@@ -9,6 +9,8 @@ volatile int g_diffVol = 0;
 volatile int g_btnEvent = 0;
 volatile int g_oldPORTD = 0;
 
+int g_dirtyWidgets = 0xFF;
+
 bool hasPinEvent(PinMappings pin)
 {
   if(pin >= PIN_BTN_CANCEL)

@@ -57,10 +57,11 @@ ISR (PCINT2_vect)
   g_oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
+AbstractMenu* g_curMenu;
 
 void setup() {
   pinMode(PIN_LED_OUT, OUTPUT);
-  digitalWrite(PIN_LED_OUT, LOW);
+  digitalWrite(PIN_LED_OUT, HIGH);
 
   // Initializing all ports 0 - 7
   // (serial is not used)
@@ -79,9 +80,39 @@ void setup() {
   PCMSK2 |= 0xFF; // All pins from 0 to 7 (from PCINT16 to PCINT23)
   PCIFR  |= bit (PCIF2);    // clear any outstanding interrupts
   PCICR  |= bit (PCIE2);    // enable pin change interrupts for D0 to D7
+
+  g_dirtyWidgets = 0xFF;
+  g_btnEvent = 0;
+
+  delay(100);
+  g_curMenu = new MainMenu;
+
+  delay(100);
+  digitalWrite(PIN_LED_OUT, LOW);
+}
+
+void blinkDebug(int n)
+{
+  for (int i = 0; i < n; ++i)
+  {
+    digitalWrite(PIN_LED_OUT, HIGH);
+    delay(75);
+    digitalWrite(PIN_LED_OUT, LOW);
+    delay(75);
+  }
 }
 
 void loop() {
+  blinkDebug(1);
+  
+  g_curMenu->paint();
+  g_dirtyWidgets = 0;
+  blinkDebug(2);
+  
+  g_curMenu = g_curMenu->processEvents();
+  g_btnEvent = 0;
+blinkDebug(3);
+  
   // text display tests
   /*display.setTextSize(1);
   display.setTextColor(BLACK);
@@ -96,7 +127,7 @@ void loop() {
 
   //digitalWrite(PIN_LED_OUT, digitalRead(PIN_BTN_HOLD));
 
-  for (int i = 0; i < PIN_DISPLAY_DC; ++i)
+  /* for (int i = 0; i < PIN_DISPLAY_DC; ++i)
     display.fillRect(10 + (i << 2), 8, 3, 3, digitalRead(i));
 
   for (int i = 0; i < PIN_DISPLAY_DC; ++i)
@@ -112,12 +143,12 @@ void loop() {
 
   display.println(volPos);
   display.println(selPos);
-  
-  display.println(sizeof(Test));
+
+  display.println(sizeof(int));
   display.display();
   delay(200);
 
-  display.clearDisplay();
+  display.clearDisplay();*/
 }
 
 /*
