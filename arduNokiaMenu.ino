@@ -85,7 +85,7 @@ void setup() {
   g_btnEvent = 0;
 
   delay(100);
-//  g_curMenu = new MainMenu;
+  g_curMenu = new MainMenu;
 
   if(g_curMenu)
     blinkDebug(2);
@@ -110,13 +110,15 @@ void loop() {
   display.setTextColor(BLACK);
   display.setCursor(0,0);
   display.println("Hello, world!");
+  display.display();
+
   blinkDebug(1);
   delay(1000);
-  // g_curMenu->paint(&display);
+  g_curMenu->paint(&display);
   g_dirtyWidgets = 0;
   blinkDebug(2);
   
-  // g_curMenu = g_curMenu->processEvents();
+  g_curMenu = g_curMenu->processEvents();
   g_btnEvent = 0;
   blinkDebug(3);
   
