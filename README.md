@@ -1,6 +1,11 @@
 # arduNokiaMenu
 Research on dynamic tree-like menu structure with low RAM footprint 
 
+Uses:
+- Adafruit graphics library ( https://github.com/adafruit/Adafruit-GFX-Library )
+- Adafruit-PCD8544-Nokia-5110-LCD-library ( https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library )
+- Revised MemoryFree Library ( https://github.com/McNeight/MemoryFree )
+
 Project also contains encoder and button handling by interrupts.
 
 Setup for project:
