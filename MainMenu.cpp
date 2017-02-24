@@ -5,6 +5,7 @@
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 #include "LcdUtil.h"
+#include "MenuStack.h"
 
 extern Adafruit_PCD8544 display;
 
@@ -84,7 +85,13 @@ const AbstractMenu* MainMenu::processEvents() const
     g_dirtyWidgets |= wMainVol;
 
   if(hasPinEvent(PIN_BTN_OK) && child)
-      return child;
-
+  {
+    display.clearDisplay();
+    display.setCursor(0,0);
+    printProgmem(PSTR("beginGetChild"));
+    display.display();
+    delay(1000);
+    return g_menuStack.getChild();
+  }
   return this;
 }

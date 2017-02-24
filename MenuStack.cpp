@@ -1,4 +1,11 @@
 #include "MenuStack.h"
+#include "LcdUtil.h"
+
+
+#include <SPI.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_PCD8544.h>
+extern Adafruit_PCD8544 display;
 
 MenuStack g_menuStack;
 
@@ -17,46 +24,71 @@ bool MenuStack::isEmpty() const
   return top;
 }
 
-const AbstractMenu* MenuStack::getPrevFor(const AbstractMenu* ptr) const
+const AbstractMenu* MenuStack::getPrev() const
 {
-  if (top)
-    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
-      if (it->next == ptr)
-        return it;
+  const AbstractMenu* prevPtr = nullptr;
 
-  return ptr;
+  // getting parent menu
+  const AbstractMenu* parent = getParent();
+  if (!parent)
+    return prevPtr;
+
+  // getting first submenu
+  const AbstractMenu* nextPtr = (const AbstractMenu*) metaToRam((const char *)parent->child);
+  delete parent; // removing unused
+
+  // moving further till current menu
+  while (nextPtr)
+  {
+    if (nextPtr->next == curMenu->next && nextPtr->child == curMenu->child)
+      return prevPtr;
+
+    delete prevPtr; // removing unused
+    prevPtr = nextPtr;
+    nextPtr = (const AbstractMenu*) metaToRam((const char *)nextPtr->next);
+  }
+
+  return nullptr;
 }
 
-
-const AbstractMenu* MenuStack::getNextFor(const AbstractMenu* ptr) const
+const AbstractMenu* MenuStack::getParent() const
 {
   if (top)
-    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
-      if (it->next == ptr)
-        return it;
+    return (const AbstractMenu*) metaToRam((const char *)top->data);
 
-  return ptr;
+  return nullptr;
 }
 
-const AbstractMenu* MenuStack::getParentFor(const AbstractMenu* ptr) const
+const AbstractMenu* MenuStack::getNext() const
 {
-  if (top)
-    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
-      if (it->next == ptr)
-        return it;
+  if (curMenu && curMenu->next)
+    return (const AbstractMenu*) metaToRam((const char*) curMenu->next);
 
-  return ptr;
+  return nullptr;
 }
 
-
-const AbstractMenu* MenuStack::getChildFor(const AbstractMenu* ptr) const
+const AbstractMenu* MenuStack::getChild() const
 {
-  if (top)
-    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
-      if (it->next == ptr)
-        return it;
+  printProgmem(PSTR("pch"));
+  display.display();
+  delay(1000);
 
-  return ptr;
+  if (curMenu && curMenu->child)
+  {
+    printProgmem(PSTR(",pch2"));
+    display.display();
+    delay(1000);
+    const AbstractMenu* result = (const AbstractMenu*) metaToRam((const char*) curMenu->child);
+    if (result)
+      printProgmem(PSTR(",pchOK"));
+    else
+      printProgmem(PSTR(",pchNULL"));
+    display.display();
+    delay(1000);
+    return result;
+  }
+
+  return nullptr;
 }
 
 const AbstractMenu* MenuStack::pop()
@@ -93,11 +125,24 @@ bool MenuStack::processEvents()
 {
   const AbstractMenu* prevMenu = curMenu;
   curMenu = curMenu->processEvents();
+
   if (curMenu != prevMenu)
   {
-    delete prevMenu;
+    printProgmem(PSTR("point1"));
+    display.display();
+    delay(1000);
+
+    if (curMenu->child && curMenu->child->next == prevMenu->next && curMenu->child->child == prevMenu->child)
+      pop();
+
+    if (prevMenu->child && prevMenu->child->next == curMenu->next && prevMenu->child->child == curMenu->child)
+      push(prevMenu);
+    else
+      delete prevMenu;
+
+    return true;
   }
-  
+
   return false;
 }
 

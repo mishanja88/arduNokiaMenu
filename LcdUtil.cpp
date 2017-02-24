@@ -18,7 +18,8 @@ void printRaw(const char* mem, int len, const char* title = 0)
   if (title)
   {
     printProgmem(title);
-    display.println(len);
+    display.print(len);
+    printProgmem(PSTR(":"));
   }
   for (int i = 0; i < len; ++i)
   {

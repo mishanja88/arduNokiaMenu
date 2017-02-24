@@ -120,16 +120,11 @@ void setup() {
   printProgmem(PSTR("="));
   display.println(prevFree - curFree);
 
-//  printProgmem(PSTR("CM="));
-//  display.print(idCategoryMenu);
-//  printProgmem(PSTR(", "));
-//  printRaw((char *)(&pmCat), sizeof(AbstractMenu), PSTR("CM="));
+  display.print((int)&pmCat, HEX);
+  printRaw((char *)(&pmCat), sizeof(CategoryMenu), PSTR("CM="));
 
-//  printProgmem(PSTR("MM="));
-//  display.print(idMainMenu);
-//  printProgmem(PSTR(", "));
- // printRaw((char *)(&pmMain), sizeof(AbstractMenu), PSTR("MM="));
-  //printRaw(catName, 4, 0);
+  display.print((int)&pmMain, HEX);
+  printRaw((char *)(&pmMain), sizeof(MainMenu), PSTR("MM="));
 
   display.display();
   //-------------------------------------------
