@@ -9,10 +9,10 @@
 #include "MenuStack.h"
 
 #define testMenu(x, y) const char catName2##x[] PROGMEM = "Test2" #x; \
-PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, nullptr); \
+PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, &pmCat##y); \
 \
 const char catName##x[] PROGMEM = "Test" #x; \
-PROGMEM CategoryMenu const pmCat##x(catName##x, &pmCat##y, &pmCat2##x);
+PROGMEM CategoryMenu const pmCat##x(catName##x, nullptr, &pmCat2##x);
 
 //------------------------------------------------------------------------
 
