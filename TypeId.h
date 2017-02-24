@@ -1,6 +1,7 @@
 #ifndef TYPEID_H
 #define TYPEID_H
 
+#include "Arduino.h"
 #include "ForeachMacro.h"
 
 // Each typeid capable class should declare first constructor by this macro
@@ -19,5 +20,24 @@ enum TypeId
 {
   TYPEID_ENUM(CategoryMenu, MainMenu)
 };
+
+class TypeIdClass
+{
+  public:
+    const PROGMEM TypeId typeId;
+
+  protected:
+    constexpr TypeIdClass(const TypeId _typeId)
+      : typeId(_typeId)
+    {
+    }
+};
+
+template <typename T> T* copyToRam (const T * sce)
+{
+  void *dest = malloc(sizeof(T));
+  memcpy_P (dest, sce, sizeof (T));
+  return (T*)dest;
+}
 
 #endif // TYPEID_H

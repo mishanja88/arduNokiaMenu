@@ -9,8 +9,8 @@
 #include "MenuStack.h"
 
 const char catName[] PROGMEM = "Test";
-PROGMEM CategoryMenu const pmCat(catName, (AbstractMenu*)(0xDEAD), (AbstractMenu*)(0xBEEF));
-PROGMEM MainMenu const pmMain((AbstractMenu*)(0xBEEF));
+PROGMEM CategoryMenu const pmCat(catName, nullptr, nullptr);
+PROGMEM MainMenu const pmMain(&pmCat);
 
 const int numCount = 2;
 
@@ -110,33 +110,33 @@ void setup() {
   g_btnEvent = 0;
 
   // -------------------- measure amount of RAM
-  //int prevFree = freeMemory();
-  //display.print(prevFree);
-  //printProgmem(PSTR("-"));
+  int prevFree = freeMemory();
+  display.print(prevFree);
+  printProgmem(PSTR("-"));
   //-------------------------------------------
-  g_curMenu = nullptr; //&pmMain;
+  g_curMenu = copyToRam<MainMenu>(&pmMain);
   //-------------------------------------------
-//  int curFree = freeMemory();
-//  display.print(curFree);
-//  printProgmem(PSTR("="));
-//  display.println(prevFree - curFree);
+  int curFree = freeMemory();
+  display.print(curFree);
+  printProgmem(PSTR("="));
+  display.println(prevFree - curFree);
 
-  printProgmem(PSTR("CM="));
-  display.print(idCategoryMenu);
-  printProgmem(PSTR(", "));
-  printRaw((char *)(&pmCat), sizeof(AbstractMenu), PSTR("CM="));
+//  printProgmem(PSTR("CM="));
+//  display.print(idCategoryMenu);
+//  printProgmem(PSTR(", "));
+//  printRaw((char *)(&pmCat), sizeof(AbstractMenu), PSTR("CM="));
 
-  printProgmem(PSTR("MM="));
-  display.print(idMainMenu);
-  printProgmem(PSTR(", "));
-  printRaw((char *)(&pmMain), sizeof(AbstractMenu), PSTR("MM="));
+//  printProgmem(PSTR("MM="));
+//  display.print(idMainMenu);
+//  printProgmem(PSTR(", "));
+ // printRaw((char *)(&pmMain), sizeof(AbstractMenu), PSTR("MM="));
   //printRaw(catName, 4, 0);
 
   display.display();
   //-------------------------------------------
 
-  blinkDebug(5);
-  delay(10000);
+  //blinkDebug(5);
+  //delay(3000);
   if (g_curMenu)
     blinkDebug(2);
 
