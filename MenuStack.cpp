@@ -28,34 +28,64 @@ const AbstractMenu* MenuStack::getPrev() const
 {
   const AbstractMenu* prevPtr = nullptr;
 
-  // getting parent menu
-  const AbstractMenu* parent = getParent();
-  if (!parent)
+
+
+  if (!top)
+  {
+    printProgmem(PSTR("gPtop(NULL),"));
+    display.display();
+    delay(1000);
     return prevPtr;
+  }
+
+  // getting parent menu
+  const AbstractMenu* parent = top->data;
+  return getPrevHelper(parent, curMenu);
+}
+
+const AbstractMenu* MenuStack::getPrevHelper(const AbstractMenu* parent, const AbstractMenu* child) const
+{
+  const AbstractMenu* prevPtr = nullptr;
+  if (!parent)
+  {
+    printProgmem(PSTR("gpPar(NULL),"));
+    display.display();
+    delay(1000);
+
+    return prevPtr;
+  }
 
   // getting first submenu
   const AbstractMenu* nextPtr = (const AbstractMenu*) metaToRam((const char *)parent->child);
-  delete parent; // removing unused
+  prevPtr = nextPtr;
 
   // moving further till current menu
   while (nextPtr)
   {
     if (nextPtr->next == curMenu->next && nextPtr->child == curMenu->child)
-      return prevPtr;
+      break;
 
-    delete prevPtr; // removing unused
+    if (prevPtr != nextPtr)
+      delete prevPtr; // removing unused
     prevPtr = nextPtr;
     nextPtr = (const AbstractMenu*) metaToRam((const char *)nextPtr->next);
   }
 
-  return nullptr;
+  if (prevPtr != nextPtr)
+    delete nextPtr;
+  return prevPtr;
 }
 
-const AbstractMenu* MenuStack::getParent() const
+
+
+const AbstractMenu* MenuStack::popParent()
 {
   if (top != nullptr)
-    return top->data; // already in heap!
+  {
+    return pop(); // top->data; // already in heap!
+  }
 
+  display.clearDisplay();
   printProgmem(PSTR("NO TO,"));
   display.display();
   delay(1000);
@@ -107,9 +137,11 @@ void MenuStack::push(const AbstractMenu* menu)
   if (menu)
   {
     Item* prevTop = top;
-    top = (Item*) malloc(sizeof(Item));
-    top->data = menu;
-    top->prev = prevTop;
+    // top = (Item*) malloc(sizeof(Item));
+    // top->data = menu;
+    // top->prev = prevTop;
+
+    top = new Item(menu, prevTop);
 
     if (!top)
     {
@@ -158,14 +190,25 @@ bool MenuStack::processEvents()
       delay(5000);
     }
 
-    if (curMenu->child && curMenu->child->next == prevMenu->next && curMenu->child->child == prevMenu->child)
-    {
-      pop();
-    }
+    /*   if (curMenu->child)
+       {
+         AbstractMenu* cmChild = (AbstractMenu*) metaToRam((const char*)curMenu->child);
 
-    if (prevMenu->child && (prevMenu->child->next == curMenu->next) && (prevMenu->child->child == curMenu->child))
+         // works just for first item!
+         if ((cmChild->next == prevMenu->next) && (cmChild->child == prevMenu->child))
+
+         delete cmChild;
+       }
+    */
+
+    if (prevMenu->child)
     {
-      push(prevMenu);
+      AbstractMenu* pmChild = (AbstractMenu*) metaToRam((const char*)prevMenu->child);
+
+      if ((pmChild->next == curMenu->next) && (pmChild->child == curMenu->child))
+        push(prevMenu);
+
+      delete pmChild;
     }
     else
       delete prevMenu;

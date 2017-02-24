@@ -60,7 +60,7 @@ const AbstractMenu* CategoryMenu::processEvents() const
 
   if (hasPinEvent(PIN_BTN_CANCEL))
   {
-    const AbstractMenu* result = g_menuStack.getParent();
+    const AbstractMenu* result = g_menuStack.popParent();
 
     if (result == nullptr)
     {

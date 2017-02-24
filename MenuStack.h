@@ -22,10 +22,12 @@ class MenuStack
     bool processEvents();
     
     bool isEmpty() const;
+
+    const AbstractMenu* getPrevHelper(const AbstractMenu* parent, const AbstractMenu* child) const;
     
     const AbstractMenu* getPrev() const;
     const AbstractMenu* getNext() const;
-    const AbstractMenu* getParent() const;
+    const AbstractMenu* popParent();
     const AbstractMenu* getChild() const;
   
     const AbstractMenu* pop();
