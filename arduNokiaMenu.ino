@@ -104,6 +104,8 @@ ISR (PCINT2_vect)
 
 
 void setup() {
+  analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
+
   pinMode(PIN_LED_OUT, OUTPUT);
   digitalWrite(PIN_LED_OUT, HIGH);
 
@@ -118,31 +120,16 @@ void setup() {
   display.clearDisplay();
   display.setRotation(2);
   display.setContrast(60);
-  analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
   // pin change interrupt
   PCMSK2 |= 0xFF; // All pins from 0 to 7 (from PCINT16 to PCINT23)
   PCIFR  |= bit (PCIF2);    // clear any outstanding interrupts
   PCICR  |= bit (PCIE2);    // enable pin change interrupts for D0 to D7
 
-  g_dirtyWidgets = 0xFF;
+  g_dirtyWidgets = ~0;
   g_btnEvent = 0;
 
-  // -------------------- measure amount of RAM
-  int prevFree = freeMemory();
-  display.print(prevFree);
-  printProgmem(PSTR("-"));
-  //-------------------------------------------
   g_menuStack.init(&pmMain);
-  //-------------------------------------------(AbstractMenu*
-  int curFree = freeMemory();
-  display.print(curFree);
-  printProgmem(PSTR("="));
-  display.println(prevFree - curFree);
-  display.display();
-  //-------------------------------------------
-
-  delay(1000);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 

@@ -13,8 +13,8 @@ class MenuStack
         const AbstractMenu* data;
         Item* prev;
     };
-
-  public:
+    
+    public:
     MenuStack();
 
     void init(const AbstractMenu* _mainMenu);
@@ -24,9 +24,7 @@ class MenuStack
     bool isEmpty() const;
 
     const AbstractMenu* getPrev() const;
-    const AbstractMenu* getNext() const;
     const AbstractMenu* popParent();
-    const AbstractMenu* getChild() const;
   
     const AbstractMenu* pop();
     void push(const AbstractMenu* menu);

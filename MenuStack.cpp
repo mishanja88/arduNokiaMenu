@@ -23,31 +23,26 @@ const AbstractMenu* MenuStack::getPrev() const
     return nullptr;
 
   // getting parent menu
-  const AbstractMenu* parent = top->data;
-
-  const AbstractMenu* prevPtr = nullptr;
-  if (!parent)
-    return prevPtr;
+  const AbstractMenu* parent = (const AbstractMenu*) metaToRam((const char *)top->data);
 
   // getting first submenu
-  const AbstractMenu* nextPtr = (const AbstractMenu*) metaToRam((const char *)parent->child);
-  prevPtr = nextPtr;
+  const AbstractMenu* nextPtr = parent->child;
+
+  // returning packed result!
+  const AbstractMenu* result = parent->child;
+  delete parent;
 
   // moving further till current menu
-  while (nextPtr)
+  while (nextPtr != curMenu)
   {
-    if (nextPtr->next == curMenu->next && nextPtr->child == curMenu->child)
-      break;
-
-    if (prevPtr != nextPtr)
-      delete prevPtr; // removing unused
-    prevPtr = nextPtr;
-    nextPtr = (const AbstractMenu*) metaToRam((const char *)nextPtr->next);
+    result = nextPtr;
+    nextPtr = (const AbstractMenu*) metaToRam((const char *)nextPtr);
+    const AbstractMenu *prevPtr = nextPtr;
+    nextPtr = nextPtr->next;
+    delete prevPtr; // removing unused
   }
-
-  if (prevPtr != nextPtr)
-    delete nextPtr;
-  return prevPtr;
+  
+  return result;
 }
 
 
@@ -60,10 +55,11 @@ const AbstractMenu* MenuStack::popParent()
   return nullptr;
 }
 
+/*
 const AbstractMenu* MenuStack::getNext() const
 {
   if (curMenu && curMenu->next)
-    return (const AbstractMenu*) metaToRam((const char*) curMenu->next);
+    return curMenu->next; //(const AbstractMenu*) metaToRam((const char*) curMenu->next);
 
   return nullptr;
 }
@@ -71,10 +67,11 @@ const AbstractMenu* MenuStack::getNext() const
 const AbstractMenu* MenuStack::getChild() const
 {
   if (curMenu && curMenu->child)
-    return (const AbstractMenu*) metaToRam((const char*) curMenu->child);
+    return curMenu->child; //(const AbstractMenu*) metaToRam((const char*) curMenu->child);
 
   return nullptr;
 }
+*/
 
 const AbstractMenu* MenuStack::pop()
 {
@@ -101,39 +98,38 @@ void MenuStack::push(const AbstractMenu* menu)
 
 void MenuStack::init(const AbstractMenu* _mainMenu)
 {
-  curMenu = (AbstractMenu*) metaToRam((const char*)_mainMenu);
+  curMenu = _mainMenu; // (AbstractMenu*) metaToRam((const char*)_mainMenu);
 }
 
 void MenuStack::paint() const
 {
-  curMenu->paint();
+  const AbstractMenu* unpackedMenu = (const AbstractMenu*) metaToRam((const char*)curMenu);
+  unpackedMenu->paint();
+  delete unpackedMenu;
 }
 
 bool MenuStack::processEvents()
 {
+  bool result = false;
+
   const AbstractMenu* prevMenu = curMenu;
+  const AbstractMenu* unpackedPrev = (AbstractMenu*) metaToRam((const char*)prevMenu);
 
-  curMenu = curMenu->processEvents();
+  curMenu = unpackedPrev->processEvents();
 
-  if (curMenu != prevMenu)
+  if ((!curMenu) || curMenu == unpackedPrev)
   {
-    if (prevMenu->child)
-    {
-      AbstractMenu* pmChild = (AbstractMenu*) metaToRam((const char*)prevMenu->child);
-
-      if ((pmChild->next == curMenu->next) && (pmChild->child == curMenu->child))
+    curMenu = prevMenu;
+  }
+  else
+  {
+    if (unpackedPrev->child == curMenu)
         push(prevMenu);
-      else
-        delete prevMenu;
 
-      delete pmChild;
-    }
-    else
-      delete prevMenu;
-
-    return true;
+    result = true;
   }
 
-  return false;
+  delete unpackedPrev;
+  return result;
 }
 

@@ -62,10 +62,10 @@ const AbstractMenu* CategoryMenu::processEvents() const
     return g_menuStack.popParent();
 
   if (hasPinEvent(PIN_BTN_OK) && child)
-    return g_menuStack.getChild();
+    return child; // g_menuStack.getChild();
 
   if (hasPinEvent(PIN_SEL_DOWN) && next)
-    return g_menuStack.getNext();
+    return next; //g_menuStack.getNext();
 
   if (hasPinEvent(PIN_SEL_UP))
     return g_menuStack.getPrev();
