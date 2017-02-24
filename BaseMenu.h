@@ -9,7 +9,10 @@ class BaseMenu : public AbstractMenu
     const AbstractMenu* processEvents() const override;
 
   protected:
-    BaseMenu(const TypeId _typeId, const AbstractMenu* _child, const AbstractMenu* _next);
+    constexpr BaseMenu(const TypeId _typeId, const AbstractMenu* _child, const AbstractMenu* _next)
+      : AbstractMenu(_typeId, _child, _next)
+    {
+    }
 };
 
 #endif // BASE_MENU_H

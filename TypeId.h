@@ -4,7 +4,7 @@
 #include "ForeachMacro.h"
 
 // Each typeid capable class should declare first constructor by this macro
-#define TYPEID_CLASS(x) static const TypeId cId = id##x; x
+#define TYPEID_CLASS(x) static const TypeId cId = id##x; constexpr x
 
 // Each typeid capable class should call parent constructor by this macro
 #define TYPEID_PARENT(x) x(cId,

@@ -73,7 +73,3 @@ const AbstractMenu* CategoryMenu::processEvents() const
   return this;
 }
 
-CategoryMenu::CategoryMenu(const char *_label, const AbstractMenu* _child, const AbstractMenu* _next)
-  : TYPEID_PARENT(BaseMenu) _child, _next), label(_label)
-{
-}

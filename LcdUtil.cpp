@@ -13,3 +13,15 @@ void printProgmem(const char *data)
       display.print(buf);
 }
 
+void printRaw(const char* mem, int len, const char* title = 0)
+{
+  if (title)
+  {
+    printProgmem(title);
+    display.println();
+  }
+  for (int i = 0; i < len; ++i)
+    display.print(pgm_read_byte(mem + i), HEX);
+  display.println();
+}
+
