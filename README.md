@@ -21,3 +21,16 @@ Also menu should provide event handling logic.
 Main idea is to make classes that store as much as possible in PROGMEM.
 
 It's only beginning of research (and maybe I'm inventing a bicycle).
+
+----------------
+
+As of 2017.02.24:
+
+All menu objects are stored in PROGMEM. Dynamic memory is used only for operating on them. Thus, the main goal is accomplished. 
+
+Also dynamic memory is required for parent pointers' stack, when moving deeper into each menu level. Still, it is `O(log(n))` instead of `O(n)`.
+
+Key features:
+- Dynamic PROGMEM read: first data byte of each class contains `sizeof`.
+- Extensive use of `constexpr` constructors.
+- Stack for backward movements.
