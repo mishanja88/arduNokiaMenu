@@ -1,10 +1,24 @@
 #include "LcdUtil.h"
+#include <MemoryFree.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 
 extern Adafruit_PCD8544 display;
+
+void printDebugMem(const char *label)
+{
+    display.fillRect(0, 30, 20, 20, WHITE);
+    display.setCursor(0, 30);
+    display.println(freeMemory());
+    if(label)
+      printProgmem(label);
+      
+    display.setCursor(0, 0);
+    display.display();
+//    delay(3000);
+}
 
 void printProgmem(const char *data)
 {

@@ -179,39 +179,37 @@ void MenuStack::paint() const
 bool MenuStack::processEvents()
 {
   const AbstractMenu* prevMenu = curMenu;
+
+  printDebugMem(PSTR("Before process"));
+
   curMenu = curMenu->processEvents();
+
+  printDebugMem(PSTR("After process"));
+
 
   if (curMenu != prevMenu)
   {
-    if (curMenu == nullptr)
-    {
-      printProgmem(PSTR("NULL CURMENU!"));
-      display.display();
-      delay(5000);
-    }
-
-    /*   if (curMenu->child)
-       {
-         AbstractMenu* cmChild = (AbstractMenu*) metaToRam((const char*)curMenu->child);
-
-         // works just for first item!
-         if ((cmChild->next == prevMenu->next) && (cmChild->child == prevMenu->child))
-
-         delete cmChild;
-       }
-    */
-
     if (prevMenu->child)
     {
+      printDebugMem(PSTR("Child1"));
+
       AbstractMenu* pmChild = (AbstractMenu*) metaToRam((const char*)prevMenu->child);
 
       if ((pmChild->next == curMenu->next) && (pmChild->child == curMenu->child))
+      {
+        printDebugMem(PSTR("Child1-push"));
         push(prevMenu);
+      }
+      else
+        delete prevMenu;
 
       delete pmChild;
     }
     else
+    {
       delete prevMenu;
+      printDebugMem(PSTR("Child1-deleted"));
+    }
 
     return true;
   }

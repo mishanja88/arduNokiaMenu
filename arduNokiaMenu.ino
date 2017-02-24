@@ -163,16 +163,15 @@ void setup() {
 
 void loop() {
   blinkDebug(1);
+
+  g_dirtyWidgets = ~0;
+
+
   if (g_dirtyWidgets)
   {
     g_menuStack.paint();
 
-    display.fillRect(0, 40, 10, 20, WHITE);
-    display.setCursor(0, 40);
-    display.print(freeMemory());
-    display.setCursor(0, 0);
-
-    display.display();
+    printDebugMem();
 
     g_dirtyWidgets = 0;
 

@@ -59,19 +59,7 @@ const AbstractMenu* CategoryMenu::processEvents() const
   BaseMenu::processEvents();
 
   if (hasPinEvent(PIN_BTN_CANCEL))
-  {
-    const AbstractMenu* result = g_menuStack.popParent();
-
-    if (result == nullptr)
-    {
-      printProgmem(PSTR("ret(NULL),"));
-      display.display();
-      delay(1000);
-    }
-
-
-    return result;
-  }
+    return g_menuStack.popParent();
 
   if (hasPinEvent(PIN_BTN_OK) && child)
     return g_menuStack.getChild();
