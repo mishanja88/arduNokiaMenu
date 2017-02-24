@@ -53,20 +53,12 @@ const AbstractMenu* MenuStack::getPrev() const
 
 const AbstractMenu* MenuStack::getParent() const
 {
-  if (top)
-  {
-    printProgmem(PSTR("top(OK)"));
-    display.println((int)top->data, HEX);
-    display.display();
-    delay(1000);
-
+  if (top != nullptr)
     return top->data; // already in heap!
-  }
 
-  printProgmem(PSTR("NO TOP,"));
+  printProgmem(PSTR("NO TO,"));
   display.display();
   delay(1000);
-
 
   return nullptr;
 }
@@ -92,6 +84,11 @@ const AbstractMenu* MenuStack::pop()
   if (!top)
     return nullptr;
 
+  display.clearDisplay();
+  printProgmem(PSTR("POP POP"));
+  display.display();
+  delay(1000);
+
   const AbstractMenu* result = top->data;
   Item* prevTop = top;
   top = top->prev;
@@ -102,25 +99,37 @@ const AbstractMenu* MenuStack::pop()
 
 void MenuStack::push(const AbstractMenu* menu)
 {
-  printProgmem(PSTR("push,"));
+  display.clearDisplay();
+  printProgmem(PSTR("PUSH"));
   display.display();
   delay(1000);
 
   if (menu)
   {
-    top = new Item(menu, top);
+    Item* prevTop = top;
+    top = (Item*) malloc(sizeof(Item));
+    top->data = menu;
+    top->prev = prevTop;
 
-    if (top)
-    {
-      printProgmem(PSTR("top(OK),"));
-    }
-    else
+    if (!top)
     {
       printProgmem(PSTR("top(NULL),"));
+      display.display();
+      delay(1000);
     }
+  }
+  else
+  {
+    printProgmem(PSTR("menu(NULL),"));
     display.display();
     delay(1000);
+  }
 
+  if (!top)
+  {
+    printProgmem(PSTR("top(NULL),"));
+    display.display();
+    delay(1000);
   }
 }
 
@@ -148,7 +157,6 @@ bool MenuStack::processEvents()
       display.display();
       delay(5000);
     }
-
 
     if (curMenu->child && curMenu->child->next == prevMenu->next && curMenu->child->child == prevMenu->child)
     {

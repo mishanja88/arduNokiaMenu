@@ -8,9 +8,19 @@
 #include "LcdUtil.h"
 #include "MenuStack.h"
 
-const char catName[] PROGMEM = "Test";
-PROGMEM CategoryMenu const pmCat(catName, nullptr, nullptr);
-PROGMEM MainMenu const pmMain(&pmCat);
+const char catName4[] PROGMEM = "Test4";
+PROGMEM CategoryMenu const pmCat4(catName4, nullptr, nullptr);
+
+const char catName3[] PROGMEM = "Test3";
+PROGMEM CategoryMenu const pmCat3(catName3, nullptr, &pmCat4);
+
+const char catName2[] PROGMEM = "Test2";
+PROGMEM CategoryMenu const pmCat2(catName2, nullptr, &pmCat3);
+
+const char catName1[] PROGMEM = "Test1";
+PROGMEM CategoryMenu const pmCat1(catName1, nullptr, &pmCat2);
+
+PROGMEM MainMenu const pmMain(&pmCat1);
 
 const int numCount = 2;
 
@@ -120,11 +130,11 @@ void setup() {
   printProgmem(PSTR("="));
   display.println(prevFree - curFree);
 
-  display.print((int)&pmCat, HEX);
-  printRaw((char *)(&pmCat), sizeof(CategoryMenu), PSTR("CM="));
+  //display.print((int)&pmCat, HEX);
+  //printRaw((char *)(&pmCat), sizeof(CategoryMenu), PSTR("CM="));
 
-  display.print((int)&pmMain, HEX);
-  printRaw((char *)(&pmMain), sizeof(MainMenu), PSTR("MM="));
+  //display.print((int)&pmMain, HEX);
+  //printRaw((char *)(&pmMain), sizeof(MainMenu), PSTR("MM="));
 
   display.display();
   //-------------------------------------------
@@ -134,7 +144,7 @@ void setup() {
   //if (g_curMenu)
   //  blinkDebug(2);
 
-  delay(2000);
+  delay(200);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 

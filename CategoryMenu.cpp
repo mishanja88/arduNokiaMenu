@@ -60,22 +60,14 @@ const AbstractMenu* CategoryMenu::processEvents() const
 
   if (hasPinEvent(PIN_BTN_CANCEL))
   {
-    display.clearDisplay();
-
-    printProgmem(PSTR("bgGP,"));
-    display.display();
-    delay(1000);
-
-    
     const AbstractMenu* result = g_menuStack.getParent();
 
     if (result == nullptr)
+    {
       printProgmem(PSTR("ret(NULL),"));
-    else
-      printProgmem(PSTR("ret(OK),"));
-
-    display.display();
-    delay(1000);
+      display.display();
+      delay(1000);
+    }
 
 
     return result;
