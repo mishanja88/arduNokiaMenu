@@ -19,11 +19,11 @@ class MainMenu : public BaseMenu
       wMenuBtn = (1 << 7)
     };
 
-    TYPEID_CLASS(MainMenu) (const AbstractMenu* _child)
-      : TYPEID_PARENT(MainMenu, BaseMenu) _child, nullptr)
+    TYPEID_CONSTRUCTOR(MainMenu, BaseMenu, const AbstractMenu* _child)
+    _child, nullptr)
     {
     }
-    
+
     void paint() const override;
     const AbstractMenu* processEvents() const override;
 };

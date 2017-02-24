@@ -19,11 +19,11 @@ class CategoryMenu : public BaseMenu
       wMenuBtn = (1 << 7)
     };
 
-    TYPEID_CLASS(CategoryMenu) (const char *_label, const AbstractMenu* _child, const AbstractMenu* _next)
-      : TYPEID_PARENT(CategoryMenu, BaseMenu) _child, _next), label(_label)
+    TYPEID_CONSTRUCTOR(CategoryMenu, BaseMenu, const char *_label, const AbstractMenu* _child, const AbstractMenu* _next)
+    _child, _next), label(_label)
     {
     }
-    
+
     void paint() const override;
     const AbstractMenu* processEvents() const override;
 

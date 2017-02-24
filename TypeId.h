@@ -2,27 +2,9 @@
 #define TYPEID_H
 
 #include "Arduino.h"
-#include "ForeachMacro.h"
 
-// Each typeid capable class should declare first constructor by this macro
-#define TYPEID_CLASS(x) constexpr x
-
-//static const int cTypeSize = sizeof(x); constexpr x
-
-// Each typeid capable class should call parent constructor by this macro
-#define TYPEID_PARENT(x, parent) parent(sizeof(x),
-
-/* Enumerator item
-#define TYPEID_ITEM(X) id##X,
-// Helper function
-#define TYPEID_ENUM(FIRST, ...) id##FIRST = 1, FOR_EACH(TYPEID_ITEM,__VA_ARGS__)
-
-// Enum with all typeid-capable classes
-enum TypeId
-{
-  TYPEID_ENUM(CategoryMenu, MainMenu)
-};
-*/
+// Each typeid capable class should declare constructor by this macro
+#define TYPEID_CONSTRUCTOR(x, parent, ...) constexpr x(__VA_ARGS__) : parent(sizeof(x),
 
 class TypeIdClass
 {
