@@ -85,13 +85,7 @@ const AbstractMenu* MainMenu::processEvents() const
     g_dirtyWidgets |= wMainVol;
 
   if(hasPinEvent(PIN_BTN_OK) && child)
-  {
-    display.clearDisplay();
-    display.setCursor(0,0);
-    printProgmem(PSTR("beginGetChild"));
-    display.display();
-    delay(1000);
     return g_menuStack.getChild();
-  }
+
   return this;
 }
