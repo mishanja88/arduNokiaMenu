@@ -153,6 +153,12 @@ void loop() {
   if (g_dirtyWidgets)
   {
     g_menuStack.paint();
+
+    display.fillRect(0, 40, 10, 20, WHITE);
+    display.setCursor(0, 40);
+    display.print(freeMemory());
+    display.setCursor(0, 0);
+
     display.display();
 
     g_dirtyWidgets = 0;
@@ -164,13 +170,6 @@ void loop() {
     */
   }
 
-  display.fillRect(0,40,10,20,WHITE);
-  display.setCursor(0,40);
-  display.print(freeMemory());
-  display.setCursor(0,0);
-
-  display.display();
-  
   if (g_btnEvent)
   {
     if (g_menuStack.processEvents())
