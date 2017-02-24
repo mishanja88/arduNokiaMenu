@@ -8,32 +8,47 @@
 #include "LcdUtil.h"
 #include "MenuStack.h"
 
+#define testMenu(x, y) const char catName2##x[] PROGMEM = "Test2" #x; \
+PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, nullptr); \
+\
+const char catName##x[] PROGMEM = "Test" #x; \
+PROGMEM CategoryMenu const pmCat##x(catName##x, &pmCat##y, &pmCat2##x);
 
-const char catName1_4[] PROGMEM = "Test1-4";
-PROGMEM CategoryMenu const pmCat1_4(catName1_4, nullptr, nullptr);
+//------------------------------------------------------------------------
 
-const char catName1_3[] PROGMEM = "Test1-3";
-PROGMEM CategoryMenu const pmCat1_3(catName1_3, nullptr, &pmCat1_4);
+const char catNameZ2[] PROGMEM = "TestZ2";
+PROGMEM CategoryMenu const pmCatZ2(catNameZ2, nullptr, nullptr);
 
-const char catName1_2[] PROGMEM = "Test1-2";
-PROGMEM CategoryMenu const pmCat1_2(catName1_2, nullptr, &pmCat1_3);
+const char catNameZ[] PROGMEM = "TestZ";
+PROGMEM CategoryMenu const pmCatZ(catNameZ, nullptr, &pmCatZ2);
 
-const char catName1_1[] PROGMEM = "Test1-1";
-PROGMEM CategoryMenu const pmCat1_1(catName1_1, nullptr, &pmCat1_2);
+testMenu(Y,Z)
+testMenu(X,Y)
+testMenu(W,X)
+testMenu(V,W)
+testMenu(U,V)
+testMenu(T,U)
+testMenu(S,T)
+testMenu(R,S)
+testMenu(Q,R)
+testMenu(P,Q)
+testMenu(O,P)
+testMenu(N,O)
+testMenu(M,N)
+testMenu(L,M)
+testMenu(K,L)
+testMenu(J,K)
+testMenu(I,J)
+testMenu(H,I)
+testMenu(G,H)
+testMenu(F,G)
+testMenu(E,F)
+testMenu(D,E)
+testMenu(C,D)
+testMenu(B,C)
+testMenu(A,B)
 
-const char catName4[] PROGMEM = "Test4";
-PROGMEM CategoryMenu const pmCat4(catName4, nullptr, nullptr);
-
-const char catName3[] PROGMEM = "Test3";
-PROGMEM CategoryMenu const pmCat3(catName3, nullptr, &pmCat4);
-
-const char catName2[] PROGMEM = "Test2";
-PROGMEM CategoryMenu const pmCat2(catName2, nullptr, &pmCat3);
-
-const char catName1[] PROGMEM = "Test1";
-PROGMEM CategoryMenu const pmCat1(catName1, &pmCat1_1, &pmCat2);
-
-PROGMEM MainMenu const pmMain(&pmCat1);
+PROGMEM MainMenu const pmMain(&pmCatA);
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
