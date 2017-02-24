@@ -1,11 +1,4 @@
 #include "MenuStack.h"
-#include "LcdUtil.h"
-
-
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_PCD8544.h>
-extern Adafruit_PCD8544 display;
 
 MenuStack g_menuStack;
 
@@ -26,34 +19,15 @@ bool MenuStack::isEmpty() const
 
 const AbstractMenu* MenuStack::getPrev() const
 {
-  const AbstractMenu* prevPtr = nullptr;
-
-
-
   if (!top)
-  {
-    printProgmem(PSTR("gPtop(NULL),"));
-    display.display();
-    delay(1000);
-    return prevPtr;
-  }
+    return nullptr;
 
   // getting parent menu
   const AbstractMenu* parent = top->data;
-  return getPrevHelper(parent, curMenu);
-}
 
-const AbstractMenu* MenuStack::getPrevHelper(const AbstractMenu* parent, const AbstractMenu* child) const
-{
   const AbstractMenu* prevPtr = nullptr;
   if (!parent)
-  {
-    printProgmem(PSTR("gpPar(NULL),"));
-    display.display();
-    delay(1000);
-
     return prevPtr;
-  }
 
   // getting first submenu
   const AbstractMenu* nextPtr = (const AbstractMenu*) metaToRam((const char *)parent->child);
@@ -81,14 +55,7 @@ const AbstractMenu* MenuStack::getPrevHelper(const AbstractMenu* parent, const A
 const AbstractMenu* MenuStack::popParent()
 {
   if (top != nullptr)
-  {
-    return pop(); // top->data; // already in heap!
-  }
-
-  display.clearDisplay();
-  printProgmem(PSTR("NO TO,"));
-  display.display();
-  delay(1000);
+    return pop();
 
   return nullptr;
 }
@@ -114,11 +81,6 @@ const AbstractMenu* MenuStack::pop()
   if (!top)
     return nullptr;
 
-  display.clearDisplay();
-  printProgmem(PSTR("POP POP"));
-  display.display();
-  delay(1000);
-
   const AbstractMenu* result = top->data;
   Item* prevTop = top;
   top = top->prev;
@@ -129,39 +91,10 @@ const AbstractMenu* MenuStack::pop()
 
 void MenuStack::push(const AbstractMenu* menu)
 {
-  display.clearDisplay();
-  printProgmem(PSTR("PUSH"));
-  display.display();
-  delay(1000);
-
   if (menu)
   {
     Item* prevTop = top;
-    // top = (Item*) malloc(sizeof(Item));
-    // top->data = menu;
-    // top->prev = prevTop;
-
     top = new Item(menu, prevTop);
-
-    if (!top)
-    {
-      printProgmem(PSTR("top(NULL),"));
-      display.display();
-      delay(1000);
-    }
-  }
-  else
-  {
-    printProgmem(PSTR("menu(NULL),"));
-    display.display();
-    delay(1000);
-  }
-
-  if (!top)
-  {
-    printProgmem(PSTR("top(NULL),"));
-    display.display();
-    delay(1000);
   }
 }
 
@@ -180,36 +113,23 @@ bool MenuStack::processEvents()
 {
   const AbstractMenu* prevMenu = curMenu;
 
-  printDebugMem(PSTR("Before process"));
-
   curMenu = curMenu->processEvents();
-
-  printDebugMem(PSTR("After process"));
-
 
   if (curMenu != prevMenu)
   {
     if (prevMenu->child)
     {
-      printDebugMem(PSTR("Child1"));
-
       AbstractMenu* pmChild = (AbstractMenu*) metaToRam((const char*)prevMenu->child);
 
       if ((pmChild->next == curMenu->next) && (pmChild->child == curMenu->child))
-      {
-        printDebugMem(PSTR("Child1-push"));
         push(prevMenu);
-      }
       else
         delete prevMenu;
 
       delete pmChild;
     }
     else
-    {
       delete prevMenu;
-      printDebugMem(PSTR("Child1-deleted"));
-    }
 
     return true;
   }

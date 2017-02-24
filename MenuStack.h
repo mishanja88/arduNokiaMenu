@@ -23,8 +23,6 @@ class MenuStack
     
     bool isEmpty() const;
 
-    const AbstractMenu* getPrevHelper(const AbstractMenu* parent, const AbstractMenu* child) const;
-    
     const AbstractMenu* getPrev() const;
     const AbstractMenu* getNext() const;
     const AbstractMenu* popParent();
