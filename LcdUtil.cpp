@@ -18,10 +18,13 @@ void printRaw(const char* mem, int len, const char* title = 0)
   if (title)
   {
     printProgmem(title);
-    display.println();
+    display.println(len);
   }
   for (int i = 0; i < len; ++i)
-    display.print(pgm_read_byte(mem + i), HEX);
+  {
+    display.print(pgm_read_byte(mem++), HEX);
+    printProgmem(PSTR("|"));
+  }
   display.println();
 }
 

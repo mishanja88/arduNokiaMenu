@@ -108,25 +108,27 @@ void setup() {
   g_btnEvent = 0;
 
   // -------------------- measure amount of RAM
-  int prevFree = freeMemory();
-  display.print(prevFree);
-  printProgmem(PSTR("-"));
+  //int prevFree = freeMemory();
+  //display.print(prevFree);
+  //printProgmem(PSTR("-"));
   //-------------------------------------------
   g_curMenu = nullptr; //&pmMain;
   //-------------------------------------------
-  int curFree = freeMemory();
-  display.print(curFree);
-  printProgmem(PSTR("="));
-  display.println(prevFree - curFree);
+//  int curFree = freeMemory();
+//  display.print(curFree);
+//  printProgmem(PSTR("="));
+//  display.println(prevFree - curFree);
 
   printProgmem(PSTR("CM="));
   display.print(idCategoryMenu);
+  printProgmem(PSTR(", "));
   printRaw((char *)(&pmCat), sizeof(AbstractMenu), PSTR("CM="));
 
   printProgmem(PSTR("MM="));
   display.print(idMainMenu);
+  printProgmem(PSTR(", "));
   printRaw((char *)(&pmMain), sizeof(AbstractMenu), PSTR("MM="));
-  printRaw(catName, 4, 0);
+  //printRaw(catName, 4, 0);
 
   display.display();
   //-------------------------------------------
