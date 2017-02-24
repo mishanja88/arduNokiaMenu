@@ -20,7 +20,7 @@ class MainMenu : public BaseMenu
     };
 
     TYPEID_CLASS(MainMenu) (const AbstractMenu* _child)
-      : TYPEID_PARENT(BaseMenu) _child, nullptr)
+      : TYPEID_PARENT(MainMenu, BaseMenu) _child, nullptr)
     {
     }
     

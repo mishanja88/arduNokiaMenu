@@ -17,14 +17,23 @@ class MenuStack
   public:
     MenuStack();
 
+    void init(const AbstractMenu* _mainMenu);
+    void paint() const;
+    bool processEvents();
+    
     bool isEmpty() const;
+    
     const AbstractMenu* getPrevFor(const AbstractMenu* ptr) const;
+    const AbstractMenu* getNextFor(const AbstractMenu* ptr) const;
+    const AbstractMenu* getParentFor(const AbstractMenu* ptr) const;
+    const AbstractMenu* getChildFor(const AbstractMenu* ptr) const;
   
     const AbstractMenu* pop();
     void push(const AbstractMenu* menu);
 
   protected:
     Item* top;
+    const AbstractMenu* curMenu;
 };
 
 extern MenuStack g_menuStack;

@@ -82,7 +82,6 @@ ISR (PCINT2_vect)
   g_oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
-const AbstractMenu* g_curMenu = nullptr;
 
 void setup() {
   pinMode(PIN_LED_OUT, OUTPUT);
@@ -114,8 +113,8 @@ void setup() {
   display.print(prevFree);
   printProgmem(PSTR("-"));
   //-------------------------------------------
-  g_curMenu = copyToRam<MainMenu>(&pmMain);
-  //-------------------------------------------
+  g_menuStack.init(&pmMain);
+  //-------------------------------------------(AbstractMenu*
   int curFree = freeMemory();
   display.print(curFree);
   printProgmem(PSTR("="));
@@ -137,8 +136,8 @@ void setup() {
 
   //blinkDebug(5);
   //delay(3000);
-  if (g_curMenu)
-    blinkDebug(2);
+  //if (g_curMenu)
+  //  blinkDebug(2);
 
   delay(3000);
   digitalWrite(PIN_LED_OUT, LOW);
@@ -148,7 +147,7 @@ void loop() {
   blinkDebug(1);
   if (g_dirtyWidgets)
   {
-    g_curMenu->paint();
+    g_menuStack.paint();
     display.display();
 
     g_dirtyWidgets = 0;
@@ -161,11 +160,7 @@ void loop() {
   }
   if (g_btnEvent)
   {
-    const AbstractMenu* prevMenu = g_curMenu;
-
-    g_curMenu = g_curMenu->processEvents();
-
-    if (prevMenu != g_curMenu)
+    if (g_menuStack.processEvents())
       g_dirtyWidgets = ~0;
 
     // debounce

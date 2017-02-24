@@ -14,8 +14,8 @@ class AbstractMenu : public TypeIdClass
     const PROGMEM AbstractMenu* next;
 
   protected:
-    constexpr AbstractMenu(const TypeId _typeId, const AbstractMenu* _child, const AbstractMenu* _next)
-      : TypeIdClass(_typeId), child(_child), next(_next)
+    constexpr AbstractMenu(const int _typeSize, const AbstractMenu* _child, const AbstractMenu* _next)
+      : TypeIdClass(_typeSize), child(_child), next(_next)
     {
     }
 

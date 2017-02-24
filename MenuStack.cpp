@@ -27,6 +27,38 @@ const AbstractMenu* MenuStack::getPrevFor(const AbstractMenu* ptr) const
   return ptr;
 }
 
+
+const AbstractMenu* MenuStack::getNextFor(const AbstractMenu* ptr) const
+{
+  if (top)
+    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
+      if (it->next == ptr)
+        return it;
+
+  return ptr;
+}
+
+const AbstractMenu* MenuStack::getParentFor(const AbstractMenu* ptr) const
+{
+  if (top)
+    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
+      if (it->next == ptr)
+        return it;
+
+  return ptr;
+}
+
+
+const AbstractMenu* MenuStack::getChildFor(const AbstractMenu* ptr) const
+{
+  if (top)
+    for (const AbstractMenu* it = top->data->child; it != ptr; it = it->next)
+      if (it->next == ptr)
+        return it;
+
+  return ptr;
+}
+
 const AbstractMenu* MenuStack::pop()
 {
   if (!top)
@@ -45,3 +77,27 @@ void MenuStack::push(const AbstractMenu* menu)
   if (menu)
     top = new Item(menu, top);
 }
+
+
+void MenuStack::init(const AbstractMenu* _mainMenu)
+{
+  curMenu = (AbstractMenu*) metaToRam((const char*)_mainMenu);
+}
+
+void MenuStack::paint() const
+{
+  curMenu->paint();
+}
+
+bool MenuStack::processEvents()
+{
+  const AbstractMenu* prevMenu = curMenu;
+  curMenu = curMenu->processEvents();
+  if (curMenu != prevMenu)
+  {
+    delete prevMenu;
+  }
+  
+  return false;
+}
+
