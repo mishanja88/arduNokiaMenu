@@ -9,8 +9,10 @@
 #include "MenuStack.h"
 
 const char catName[] PROGMEM = "Test";
-CategoryMenu const pmCat(catName, nullptr, nullptr);
-MainMenu const pmMain(nullptr);
+PROGMEM CategoryMenu const pmCat(catName, (AbstractMenu*)(0xDEAD), (AbstractMenu*)(0xBEEF));
+PROGMEM MainMenu const pmMain((AbstractMenu*)(0xBEEF));
+
+const int numCount = 2;
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
