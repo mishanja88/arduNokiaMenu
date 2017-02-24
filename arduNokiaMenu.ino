@@ -8,7 +8,13 @@
 #include "LcdUtil.h"
 #include "MenuStack.h"
 
+
+const char catName[] PROGMEM = "Test";
+const CategoryMenu PROGMEM pmCat(catName, nullptr, nullptr);
+
+
 const MainMenu PROGMEM pmMain(nullptr);
+
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
@@ -118,13 +124,13 @@ void setup() {
   display.println(prevFree - curFree);
 
   printProgmem(PSTR("CM="));
-  display.print(sizeof(CategoryMenu));
+  //display.print(typeid(CategoryMenu));
   printProgmem(PSTR(",BM="));
-  display.print(sizeof(BaseMenu));
+  //display.print(typeid(BaseMenu));
   printProgmem(PSTR(",MM="));
-  display.print(sizeof(MainMenu));
+  //display.print(typeid(MainMenu));
   printProgmem(PSTR(",AM="));
-  display.print(sizeof(AbstractMenu));
+  //display.print(typeid(AbstractMenu));
 
   display.display();
   //-------------------------------------------

@@ -1,8 +1,8 @@
 #include "BaseMenu.h"
 #include "SystemState.h"
 
-BaseMenu::BaseMenu(const AbstractMenu* _child, const AbstractMenu* _next)
-: AbstractMenu(_child, _next)
+BaseMenu::BaseMenu(const TypeId _typeId, const AbstractMenu* _child, const AbstractMenu* _next)
+: AbstractMenu(_typeId, _child, _next)
 {
 }
 

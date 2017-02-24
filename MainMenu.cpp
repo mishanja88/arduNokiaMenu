@@ -90,6 +90,6 @@ const AbstractMenu* MainMenu::processEvents() const
 }
 
 MainMenu::MainMenu(const AbstractMenu* _child)
-  : BaseMenu(_child, nullptr)
+  : TYPEID_PARENT(BaseMenu) _child, nullptr)
 {
 }
