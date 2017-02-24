@@ -8,6 +8,19 @@
 #include "LcdUtil.h"
 #include "MenuStack.h"
 
+
+const char catName1_4[] PROGMEM = "Test1-4";
+PROGMEM CategoryMenu const pmCat1_4(catName1_4, nullptr, nullptr);
+
+const char catName1_3[] PROGMEM = "Test1-3";
+PROGMEM CategoryMenu const pmCat1_3(catName1_3, nullptr, &pmCat1_4);
+
+const char catName1_2[] PROGMEM = "Test1-2";
+PROGMEM CategoryMenu const pmCat1_2(catName1_2, nullptr, &pmCat1_3);
+
+const char catName1_1[] PROGMEM = "Test1-1";
+PROGMEM CategoryMenu const pmCat1_1(catName1_1, nullptr, &pmCat1_2);
+
 const char catName4[] PROGMEM = "Test4";
 PROGMEM CategoryMenu const pmCat4(catName4, nullptr, nullptr);
 
@@ -18,7 +31,7 @@ const char catName2[] PROGMEM = "Test2";
 PROGMEM CategoryMenu const pmCat2(catName2, nullptr, &pmCat3);
 
 const char catName1[] PROGMEM = "Test1";
-PROGMEM CategoryMenu const pmCat1(catName1, nullptr, &pmCat2);
+PROGMEM CategoryMenu const pmCat1(catName1, &pmCat1_1, &pmCat2);
 
 PROGMEM MainMenu const pmMain(&pmCat1);
 
