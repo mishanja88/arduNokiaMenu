@@ -124,11 +124,11 @@ void setup() {
   display.println(prevFree - curFree);
 
   printProgmem(PSTR("CM="));
-  //display.print(typeid(CategoryMenu));
+  display.print(idCategoryMenu);
   printProgmem(PSTR(",BM="));
   //display.print(typeid(BaseMenu));
   printProgmem(PSTR(",MM="));
-  //display.print(typeid(MainMenu));
+  display.print(idMainMenu);
   printProgmem(PSTR(",AM="));
   //display.print(typeid(AbstractMenu));
 
@@ -136,7 +136,7 @@ void setup() {
   //-------------------------------------------
 
   blinkDebug(5);
-  delay(1000);
+  delay(10000);
   if (g_curMenu)
     blinkDebug(2);
 
