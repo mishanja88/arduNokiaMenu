@@ -134,7 +134,7 @@ void setup() {
   //if (g_curMenu)
   //  blinkDebug(2);
 
-  delay(3000);
+  delay(2000);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 
@@ -153,6 +153,14 @@ void loop() {
       g_dirtyWidgets = 0xFF;
     */
   }
+
+  display.fillRect(0,40,10,20,WHITE);
+  display.setCursor(0,40);
+  display.print(freeMemory());
+  display.setCursor(0,0);
+
+  display.display();
+  
   if (g_btnEvent)
   {
     if (g_menuStack.processEvents())

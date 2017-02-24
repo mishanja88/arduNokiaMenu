@@ -54,7 +54,19 @@ const AbstractMenu* MenuStack::getPrev() const
 const AbstractMenu* MenuStack::getParent() const
 {
   if (top)
-    return (const AbstractMenu*) metaToRam((const char *)top->data);
+  {
+    printProgmem(PSTR("top(OK)"));
+    display.println((int)top->data, HEX);
+    display.display();
+    delay(1000);
+
+    return top->data; // already in heap!
+  }
+
+  printProgmem(PSTR("NO TOP,"));
+  display.display();
+  delay(1000);
+
 
   return nullptr;
 }
@@ -69,24 +81,8 @@ const AbstractMenu* MenuStack::getNext() const
 
 const AbstractMenu* MenuStack::getChild() const
 {
-  printProgmem(PSTR("pch"));
-  display.display();
-  delay(1000);
-
   if (curMenu && curMenu->child)
-  {
-    printProgmem(PSTR(",pch2"));
-    display.display();
-    delay(1000);
-    const AbstractMenu* result = (const AbstractMenu*) metaToRam((const char*) curMenu->child);
-    if (result)
-      printProgmem(PSTR(",pchOK"));
-    else
-      printProgmem(PSTR(",pchNULL"));
-    display.display();
-    delay(1000);
-    return result;
-  }
+    return (const AbstractMenu*) metaToRam((const char*) curMenu->child);
 
   return nullptr;
 }
@@ -106,8 +102,26 @@ const AbstractMenu* MenuStack::pop()
 
 void MenuStack::push(const AbstractMenu* menu)
 {
+  printProgmem(PSTR("push,"));
+  display.display();
+  delay(1000);
+
   if (menu)
+  {
     top = new Item(menu, top);
+
+    if (top)
+    {
+      printProgmem(PSTR("top(OK),"));
+    }
+    else
+    {
+      printProgmem(PSTR("top(NULL),"));
+    }
+    display.display();
+    delay(1000);
+
+  }
 }
 
 
@@ -128,15 +142,23 @@ bool MenuStack::processEvents()
 
   if (curMenu != prevMenu)
   {
-    printProgmem(PSTR("point1"));
-    display.display();
-    delay(1000);
+    if (curMenu == nullptr)
+    {
+      printProgmem(PSTR("NULL CURMENU!"));
+      display.display();
+      delay(5000);
+    }
+
 
     if (curMenu->child && curMenu->child->next == prevMenu->next && curMenu->child->child == prevMenu->child)
+    {
       pop();
+    }
 
-    if (prevMenu->child && prevMenu->child->next == curMenu->next && prevMenu->child->child == curMenu->child)
+    if (prevMenu->child && (prevMenu->child->next == curMenu->next) && (prevMenu->child->child == curMenu->child))
+    {
       push(prevMenu);
+    }
     else
       delete prevMenu;
 
