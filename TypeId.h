@@ -19,6 +19,7 @@ class TypeIdClass
     }
 };
 
+// See PROGMEM_getAnything, http://www.gammon.com.au/progmem
 template <typename T> T* copyToRam (const T * sce)
 {
   void *dest = malloc(sizeof(T));
