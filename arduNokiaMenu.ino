@@ -9,10 +9,10 @@
 #include "MenuStack.h"
 
 #define testMenu(x, y) const char catName2##x[] PROGMEM = "Test2" #x; \
-PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, &pmCat##y); \
-\
-const char catName##x[] PROGMEM = "Test" #x; \
-PROGMEM CategoryMenu const pmCat##x(catName##x, nullptr, &pmCat2##x);
+  PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, &pmCat##y); \
+  \
+  const char catName##x[] PROGMEM = "Test" #x; \
+  PROGMEM CategoryMenu const pmCat##x(catName##x, nullptr, &pmCat2##x);
 
 //------------------------------------------------------------------------
 
@@ -22,31 +22,31 @@ PROGMEM CategoryMenu const pmCatZ2(catNameZ2, nullptr, nullptr);
 const char catNameZ[] PROGMEM = "TestZ";
 PROGMEM CategoryMenu const pmCatZ(catNameZ, nullptr, &pmCatZ2);
 
-testMenu(Y,Z)
-testMenu(X,Y)
-testMenu(W,X)
-testMenu(V,W)
-testMenu(U,V)
-testMenu(T,U)
-testMenu(S,T)
-testMenu(R,S)
-testMenu(Q,R)
-testMenu(P,Q)
-testMenu(O,P)
-testMenu(N,O)
-testMenu(M,N)
-testMenu(L,M)
-testMenu(K,L)
-testMenu(J,K)
-testMenu(I,J)
-testMenu(H,I)
-testMenu(G,H)
-testMenu(F,G)
-testMenu(E,F)
-testMenu(D,E)
-testMenu(C,D)
-testMenu(B,C)
-testMenu(A,B)
+testMenu(Y, Z)
+testMenu(X, Y)
+testMenu(W, X)
+testMenu(V, W)
+testMenu(U, V)
+testMenu(T, U)
+testMenu(S, T)
+testMenu(R, S)
+testMenu(Q, R)
+testMenu(P, Q)
+testMenu(O, P)
+testMenu(N, O)
+testMenu(M, N)
+testMenu(L, M)
+testMenu(K, L)
+testMenu(J, K)
+testMenu(I, J)
+testMenu(H, I)
+testMenu(G, H)
+testMenu(F, G)
+testMenu(E, F)
+testMenu(D, E)
+testMenu(C, D)
+testMenu(B, C)
+testMenu(A, B)
 
 PROGMEM MainMenu const pmMain(&pmCatA);
 
@@ -60,6 +60,8 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(PIN_DISPLAY_DC, 0, PIN_DISPLAY_RESET
 // Note with hardware SPI MISO and SS pins aren't used but will still be read
 // and written to during SPI transfer.  Be careful sharing these pins!
 
+static const int cBtnHoldFlag = (1 << PIN_BTN_HOLD);
+
 ISR (PCINT2_vect)
 {
   static int g_btnPush = 0;
@@ -71,9 +73,20 @@ ISR (PCINT2_vect)
   g_curPORTD = PIND;
   g_btnPush = g_oldPORTD ^ g_curPORTD;
 
+  // Checking hold on press
+  if (cBtnHoldFlag & ~g_curPORTD)
+  {
+    if ((g_btnPush & cBtnHoldFlag))
+    {
+      g_btnEvent = cBtnHoldFlag;
+    }
+    return;
+  }
+
   // Event set only on button release
   g_btnEvent |= (g_btnPush & ~g_curPORTD);
   g_btnEvent &= EVENT_BTN_MASK;
+
 
   // Checking encoder rotation
   if (g_btnPush & EVENT_VOL_MASK)
