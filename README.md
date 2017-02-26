@@ -34,3 +34,11 @@ Key features:
 - Dynamic PROGMEM read: first data byte of each class contains `sizeof`.
 - Extensive use of `constexpr` constructors.
 - Stack for backward movements.
+
+----------------
+
+As of 2017.02.26: Zero dynamic memory usage, got rid of stack. Current menu object remains 'unpacked' in dynamic memory for performance, but now used memory amount is always `O(1)`. Complete victory!
+
+All items are two-way linked through a progmem array offset, required connected address is calculated at runtime with array start provided.
+
+Now there's only progmem optimizations left.
