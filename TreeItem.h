@@ -3,48 +3,53 @@
 
 #include "Arduino.h"
 
+enum TreeItemType
+{
+  TI_ROOT = 0x0,
+  TI_BEGIN = 0x1,
+  TI_END = 0x2,
+  TI_MID = 0x3,
+};
+
 template <typename T>
 class TreeItem
 {
   public:
     const PROGMEM T* data;
 
-    constexpr TreeItem(const T* _data, int _id,
-                       int _iParent,
-                       int _iChild,
-                       bool _hasPrev,
-                       bool _hasNext
+    constexpr TreeItem(const T* _data, unsigned int _id,
+                       unsigned int _iParent,
+                       unsigned int _iChild,
+                       TreeItemType _iType
                       )
       : data(_data),
-        id(_id),
         iParent(_iParent),
         iChild(_iChild),
-        hasPrev(_hasPrev),
-        hasNext(_hasNext)
+        iType(_iType),
+        id(_id)
     {
     }
+
     inline const TreeItem<T>* parent(const char* arr) const {
-      return ((iParent >= 0) ? (const TreeItem<T>*)pgm_read_word(arr + iParent * sizeof(const TreeItem<T>*)) : nullptr);
+      return ((iParent != ~0) ? (const TreeItem<T>*)pgm_read_word(arr + iParent * sizeof(const TreeItem<T>*)) : nullptr);
     }
-//(const char*)pgm_read_byte(i * sizeof(const MenuTreeItem*) + (char*)&gTreeArray)
-    
     inline const TreeItem<T>* child(const char* arr) const {
-      return ((iChild >= 0) ? (const TreeItem<T>*)pgm_read_word(arr + iChild * sizeof(const TreeItem<T>*)) : nullptr);
+      return ((iChild != ~0) ? (const TreeItem<T>*)pgm_read_word(arr + iChild * sizeof(const TreeItem<T>*)) : nullptr);
     }
     inline const TreeItem<T>* prev(const char* arr) const {
-      return (hasPrev ? (const TreeItem<T>*)pgm_read_word( arr + (id - 1) * sizeof(const TreeItem<T>*)) : nullptr);
+      return ((iType & TI_END) ? (const TreeItem<T>*)pgm_read_word( arr + (id - 1) * sizeof(const TreeItem<T>*)) : nullptr);
     }
     inline const TreeItem<T>* next(const char* arr) const {
-      return (hasNext ? (const TreeItem<T>*)pgm_read_word( arr + (id + 1) * sizeof(const TreeItem<T>*)) : nullptr);
+      return ((iType & TI_BEGIN) ? (const TreeItem<T>*)pgm_read_word( arr + (id + 1) * sizeof(const TreeItem<T>*)) : nullptr);
     }
 
   protected:
-    const PROGMEM int id;
-    const PROGMEM int iParent;
-    const PROGMEM int iChild;
-    const PROGMEM bool hasPrev;
-    const PROGMEM bool hasNext;
-};
+    const PROGMEM unsigned int iParent;
+    const PROGMEM unsigned int iChild;
+    const PROGMEM unsigned int id;
+    const PROGMEM unsigned char iType;
+ 
+} __attribute__((packed));
 
 #endif // TREEITEM_H
 
