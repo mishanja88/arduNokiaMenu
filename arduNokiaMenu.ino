@@ -9,31 +9,35 @@
 #include "MenuStack.h"
 #include "TreeItem.h"
 
+#define TI_TOP_ITEM 0, -1
 
-#define testMenu(x) const char catName##x[] PROGMEM = "Test" #x; \
-  CategoryMenu const PROGMEM pmCat##x(catName##x);
-
-MainMenu const pmMain PROGMEM; // &pmCatA);
-testMenu(1)
-testMenu(2)
-testMenu(3)
-testMenu(4)
-testMenu(5)
-testMenu(6)
-
-#define TI_TOP 0, -1
+#define TI_1_TOP 0, 7
+#define TI_1_ITEM 1, 7
 
 #define TI_BEGIN false, true
 #define TI_O true, true
 #define TI_END true, false
 
+#define treeArrItem(x) const char catName##x[] PROGMEM = "Test" #x; \
+  CategoryMenu const PROGMEM pmCat##x(catName##x); \
+  const MenuTreeItem PROGMEM gTreeArrayItem##x((const AbstractMenu*)&pmCat##x
+
+MainMenu const pmMain PROGMEM; // &pmCatA);
 const MenuTreeItem PROGMEM gTreeArrayItem0((const AbstractMenu*)&pmMain, 0, -1, 1, false, false); // id0, no parent, child is 1, no prev, no next
-const MenuTreeItem PROGMEM gTreeArrayItem1((const AbstractMenu*)&pmCat1, 1, TI_TOP, TI_BEGIN);
-const MenuTreeItem PROGMEM gTreeArrayItem2((const AbstractMenu*)&pmCat2, 2, TI_TOP, TI_O);
-const MenuTreeItem PROGMEM gTreeArrayItem3((const AbstractMenu*)&pmCat3, 3, TI_TOP, TI_O);
-const MenuTreeItem PROGMEM gTreeArrayItem4((const AbstractMenu*)&pmCat4, 4, TI_TOP, TI_O);
-const MenuTreeItem PROGMEM gTreeArrayItem5((const AbstractMenu*)&pmCat5, 5, TI_TOP, TI_O);
-const MenuTreeItem PROGMEM gTreeArrayItem6((const AbstractMenu*)&pmCat6, 6, TI_TOP, TI_END);
+
+treeArrItem(1), 1, TI_1_TOP, TI_BEGIN);
+treeArrItem(2), 2, TI_TOP_ITEM, TI_O);
+treeArrItem(3), 3, TI_TOP_ITEM, TI_O);
+treeArrItem(4), 4, TI_TOP_ITEM, TI_O);
+treeArrItem(5), 5, TI_TOP_ITEM, TI_O);
+treeArrItem(6), 6, TI_TOP_ITEM, TI_END);
+
+treeArrItem(1_1), 7, TI_1_ITEM, TI_BEGIN);
+treeArrItem(1_2), 8, TI_1_ITEM, TI_O);
+treeArrItem(1_3), 9, TI_1_ITEM, TI_O);
+treeArrItem(1_4), 10, TI_1_ITEM, TI_O);
+treeArrItem(1_5), 11, TI_1_ITEM, TI_O);
+treeArrItem(1_6), 12, TI_1_ITEM, TI_END);
 
 const MenuTreeItem* const gTreeArray[] PROGMEM = {
   &gTreeArrayItem0,
@@ -43,6 +47,12 @@ const MenuTreeItem* const gTreeArray[] PROGMEM = {
   &gTreeArrayItem4,
   &gTreeArrayItem5,
   &gTreeArrayItem6,
+  &gTreeArrayItem1_1,
+  &gTreeArrayItem1_2,
+  &gTreeArrayItem1_3,
+  &gTreeArrayItem1_4,
+  &gTreeArrayItem1_5,
+  &gTreeArrayItem1_6,
 };
 
 // Hardware SPI (faster, but must use certain hardware pins):
