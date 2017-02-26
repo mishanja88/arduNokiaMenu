@@ -36,13 +36,13 @@ const MenuTreeItem PROGMEM gTreeArrayItem5((const AbstractMenu*)&pmCat5, 5, TI_T
 const MenuTreeItem PROGMEM gTreeArrayItem6((const AbstractMenu*)&pmCat6, 6, TI_TOP, TI_END);
 
 const MenuTreeItem* const gTreeArray[] PROGMEM = {
-    &gTreeArrayItem0,
-    &gTreeArrayItem1,
-    &gTreeArrayItem2,
-    &gTreeArrayItem3,
-    &gTreeArrayItem4,
-    &gTreeArrayItem5,
-    &gTreeArrayItem6,
+  &gTreeArrayItem0,
+  &gTreeArrayItem1,
+  &gTreeArrayItem2,
+  &gTreeArrayItem3,
+  &gTreeArrayItem4,
+  &gTreeArrayItem5,
+  &gTreeArrayItem6,
 };
 
 // Hardware SPI (faster, but must use certain hardware pins):
@@ -145,13 +145,13 @@ void setup() {
 
   display.clearDisplay();
   display.setCursor(0, 0);
-  
-  printProgmem(PSTR("RAW:"));
-  display.println((int)&gTreeArray, HEX);
-  printRaw((char*)&gTreeArray, sizeof(const TreeItem<int>), 0);
-  display.display();
 
-  delay(2000);
+  /*
+    printProgmem(PSTR("RAW:"));
+    display.println((int)&gTreeArray, HEX);
+    printRaw((char*)&gTreeArray, 2 * sizeof(const MenuTreeItem*), 0);
+    display.display();
+  */
 
   // pin change interrupt
   PCMSK2 |= 0xFF; // All pins from 0 to 7 (from PCINT16 to PCINT23)
@@ -161,7 +161,31 @@ void setup() {
   g_dirtyWidgets = ~0;
   g_btnEvent = 0;
 
-  g_menuStack.init(gTreeArray);
+  /*    display.clearDisplay();
+      display.setCursor(0, 0);
+      printRaw((char*)&gTreeArray, 7*sizeof(const MenuTreeItem*), PSTR(":"));
+      display.display();
+
+      g_btnEvent = 0;
+      while (!g_btnEvent)
+      {}
+      g_btnEvent = 0;
+
+    for (int i = 0; i < 7; ++i)
+    {
+      display.clearDisplay();
+      display.setCursor(0, 0);
+      display.print(i);
+      printRaw((const char*)pgm_read_byte(i * sizeof(const MenuTreeItem*) + (char*)&gTreeArray), sizeof(const MenuTreeItem), PSTR(":"));
+      display.display();
+
+      g_btnEvent = 0;
+      while (!g_btnEvent)
+      {}
+      g_btnEvent = 0;
+    }
+  */
+  g_menuStack.init((const char*) &gTreeArray);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 

@@ -8,7 +8,7 @@ class MenuStack
   public:
     MenuStack();
 
-    void init(const void* _arrayPtr);
+    void init(const char* _arrayPtr);
     void paint() const;
     bool processEvents();
 
@@ -29,7 +29,7 @@ class MenuStack
     const MenuTreeItem* unpackItem(const MenuTreeItem* packedItemPtr) const;
     const AbstractMenu* unpackMenu(const MenuTreeItem* packedItemPtr) const;
 
-    const MenuTreeItem** arrayPtr;
+    const char* arrayPtr;
     const MenuTreeItem* curPackedItem;
 
     const MenuTreeItem* curUnpackedItem;

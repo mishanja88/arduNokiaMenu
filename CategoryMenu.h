@@ -19,7 +19,7 @@ class CategoryMenu : public BaseMenu
       wMenuBtn = (1 << 7)
     };
 
-    CategoryMenu(const char *_label)
+    constexpr CategoryMenu(const char *_label)
     : BaseMenu(sizeof(CategoryMenu)), label(_label)
     {
     }

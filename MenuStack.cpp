@@ -1,12 +1,5 @@
 #include "MenuStack.h"
 
-#include <SPI.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_PCD8544.h>
-#include "LcdUtil.h"
-
-extern Adafruit_PCD8544 display;
-
 MenuStack g_menuStack;
 
 MenuStack::MenuStack()
@@ -24,9 +17,9 @@ const AbstractMenu* MenuStack::unpackMenu(const MenuTreeItem* unpackedItemPtr) c
   return (const AbstractMenu*) metaToRam((const char *) unpackedItemPtr->data);
 }
 
-void MenuStack::init(const void* _arrayPtr)
+void MenuStack::init(const char* _arrayPtr)
 {
-  arrayPtr = (const MenuTreeItem**)_arrayPtr;
+  arrayPtr = _arrayPtr;
   curPackedItem = (const MenuTreeItem*) pgm_read_word(_arrayPtr);
   curUnpackedItem = unpackItem(curPackedItem);
   curUnpackedMenu = unpackMenu(curUnpackedItem);
@@ -41,26 +34,14 @@ bool MenuStack::processEvents()
 {
   const MenuTreeItem* nextItem = curUnpackedMenu->processEvents();
 
-  display.clearDisplay();
-  printRaw((const char*)curPackedItem, sizeof(MenuTreeItem), PSTR("CurPacked"));
-  display.display();
-  delay(3000);
-
   if (nextItem && nextItem != curPackedItem)
   {
-    printRaw((const char*)nextItem, sizeof(MenuTreeItem), PSTR("nextItem"));
-    display.display();
-    delay(3000);
-    
+    curPackedItem = nextItem;
+
     delete curUnpackedItem;
     delete curUnpackedMenu;
-
-    curUnpackedItem = unpackItem(nextItem);
-
-//    printRaw((const char*)curUnpackedItem, sizeof(MenuTreeItem), PSTR("nextItem"));
-//    display.display();
-//    delay(3000);
     
+    curUnpackedItem = unpackItem(nextItem);
     curUnpackedMenu = unpackMenu(curUnpackedItem);
 
     return true;
