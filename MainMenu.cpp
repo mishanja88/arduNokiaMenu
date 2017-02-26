@@ -77,15 +77,15 @@ void MainMenu::paint() const
   // display.println("done");
 }
 
-const AbstractMenu* MainMenu::processEvents() const
+const MenuTreeItem* MainMenu::processEvents() const
 {
   BaseMenu::processEvents();
 
   if(g_diffVol)
     g_dirtyWidgets |= wMainVol;
 
-  if(hasPinEvent(PIN_BTN_OK) && child)
-    return child; //g_menuStack.getChild();
+  if(hasPinEvent(PIN_BTN_OK))
+    return g_menuStack.getChild();
 
-  return this;
+  return nullptr;
 }

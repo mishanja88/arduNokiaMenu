@@ -19,13 +19,13 @@ class CategoryMenu : public BaseMenu
       wMenuBtn = (1 << 7)
     };
 
-    TYPEID_CONSTRUCTOR(CategoryMenu, BaseMenu, const char *_label, const AbstractMenu* _child, const AbstractMenu* _next)
-    _child, _next), label(_label)
+    CategoryMenu(const char *_label)
+    : BaseMenu(sizeof(CategoryMenu)), label(_label)
     {
     }
 
     void paint() const override;
-    const AbstractMenu* processEvents() const override;
+    const MenuTreeItem* processEvents() const override;
 
     protected:
       const PROGMEM char *label;

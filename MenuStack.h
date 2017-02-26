@@ -5,33 +5,36 @@
 
 class MenuStack
 {
-    class Item
-    {
-      public:
-        Item(const AbstractMenu* _data, Item* _prev);
-
-        const AbstractMenu* data;
-        Item* prev;
-    };
-    
-    public:
+  public:
     MenuStack();
 
-    void init(const AbstractMenu* _mainMenu);
+    void init(const void* _arrayPtr);
     void paint() const;
     bool processEvents();
-    
-    bool isEmpty() const;
 
-    const AbstractMenu* getPrev() const;
-    const AbstractMenu* popParent();
-  
-    const AbstractMenu* pop();
-    void push(const AbstractMenu* menu);
+    inline const MenuTreeItem* getPrev() const {
+      return curUnpackedItem ? curUnpackedItem->prev(arrayPtr) : nullptr;
+    }
+    inline const MenuTreeItem* getParent() const {
+      return curUnpackedItem ? curUnpackedItem->parent(arrayPtr) : nullptr;
+    }
+    inline const MenuTreeItem* getNext() const {
+      return curUnpackedItem ? curUnpackedItem->next(arrayPtr) : nullptr;
+    }
+    inline const MenuTreeItem* getChild() const {
+      return curUnpackedItem ? curUnpackedItem->child(arrayPtr) : nullptr;
+    }
 
   protected:
-    Item* top;
-    const AbstractMenu* curMenu;
+    const MenuTreeItem* unpackItem(const MenuTreeItem* packedItemPtr) const;
+    const AbstractMenu* unpackMenu(const MenuTreeItem* packedItemPtr) const;
+
+    const MenuTreeItem** arrayPtr;
+    const MenuTreeItem* curPackedItem;
+
+    const MenuTreeItem* curUnpackedItem;
+    const AbstractMenu* curUnpackedMenu;
+
 };
 
 extern MenuStack g_menuStack;

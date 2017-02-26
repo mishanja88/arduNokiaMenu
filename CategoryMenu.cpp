@@ -54,22 +54,22 @@ void CategoryMenu::paint() const
   // display.println("done");
 }
 
-const AbstractMenu* CategoryMenu::processEvents() const
+const MenuTreeItem* CategoryMenu::processEvents() const
 {
   BaseMenu::processEvents();
 
   if (hasPinEvent(PIN_BTN_CANCEL))
-    return g_menuStack.popParent();
+    return g_menuStack.getParent();
 
-  if (hasPinEvent(PIN_BTN_OK) && child)
-    return child; // g_menuStack.getChild();
+  if (hasPinEvent(PIN_BTN_OK))
+    return g_menuStack.getChild();
 
-  if (hasPinEvent(PIN_SEL_DOWN) && next)
-    return next; //g_menuStack.getNext();
+  if (hasPinEvent(PIN_SEL_DOWN))
+    return g_menuStack.getNext();
 
   if (hasPinEvent(PIN_SEL_UP))
     return g_menuStack.getPrev();
 
-  return this;
+  return nullptr;
 }
 

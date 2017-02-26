@@ -1,135 +1,71 @@
 #include "MenuStack.h"
 
+#include <SPI.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_PCD8544.h>
+#include "LcdUtil.h"
+
+extern Adafruit_PCD8544 display;
+
 MenuStack g_menuStack;
 
-MenuStack::Item::Item(const AbstractMenu* _data, Item* _prev)
-  : data(_data), prev(_prev)
-{
-}
-
 MenuStack::MenuStack()
-  : top(nullptr)
+  : arrayPtr(nullptr), curPackedItem(nullptr), curUnpackedItem(nullptr), curUnpackedMenu(nullptr)
 {
 }
 
-bool MenuStack::isEmpty() const
+const MenuTreeItem* MenuStack::unpackItem(const MenuTreeItem* packedItemPtr) const
 {
-  return top;
+  return copyToRam<const MenuTreeItem>(packedItemPtr);
 }
 
-const AbstractMenu* MenuStack::getPrev() const
+const AbstractMenu* MenuStack::unpackMenu(const MenuTreeItem* unpackedItemPtr) const
 {
-  if (!top)
-    return nullptr;
-
-  // getting parent menu
-  const AbstractMenu* parent = (const AbstractMenu*) metaToRam((const char *)top->data);
-
-  // getting first submenu
-  const AbstractMenu* nextPtr = parent->child;
-
-  // returning packed result!
-  const AbstractMenu* result = parent->child;
-  delete parent;
-
-  // moving further till current menu
-  while (nextPtr != curMenu)
-  {
-    result = nextPtr;
-    nextPtr = (const AbstractMenu*) metaToRam((const char *)nextPtr);
-    const AbstractMenu *prevPtr = nextPtr;
-    nextPtr = nextPtr->next;
-    delete prevPtr; // removing unused
-  }
-  
-  return result;
+  return (const AbstractMenu*) metaToRam((const char *) unpackedItemPtr->data);
 }
 
-
-
-const AbstractMenu* MenuStack::popParent()
+void MenuStack::init(const void* _arrayPtr)
 {
-  if (top != nullptr)
-    return pop();
-
-  return nullptr;
-}
-
-/*
-const AbstractMenu* MenuStack::getNext() const
-{
-  if (curMenu && curMenu->next)
-    return curMenu->next; //(const AbstractMenu*) metaToRam((const char*) curMenu->next);
-
-  return nullptr;
-}
-
-const AbstractMenu* MenuStack::getChild() const
-{
-  if (curMenu && curMenu->child)
-    return curMenu->child; //(const AbstractMenu*) metaToRam((const char*) curMenu->child);
-
-  return nullptr;
-}
-*/
-
-const AbstractMenu* MenuStack::pop()
-{
-  if (!top)
-    return nullptr;
-
-  const AbstractMenu* result = top->data;
-  Item* prevTop = top;
-  top = top->prev;
-  delete prevTop;
-
-  return result;
-}
-
-void MenuStack::push(const AbstractMenu* menu)
-{
-  if (menu)
-  {
-    Item* prevTop = top;
-    top = new Item(menu, prevTop);
-  }
-}
-
-
-void MenuStack::init(const AbstractMenu* _mainMenu)
-{
-  curMenu = _mainMenu; // (AbstractMenu*) metaToRam((const char*)_mainMenu);
+  arrayPtr = (const MenuTreeItem**)_arrayPtr;
+  curPackedItem = (const MenuTreeItem*) pgm_read_word(_arrayPtr);
+  curUnpackedItem = unpackItem(curPackedItem);
+  curUnpackedMenu = unpackMenu(curUnpackedItem);
 }
 
 void MenuStack::paint() const
 {
-  const AbstractMenu* unpackedMenu = (const AbstractMenu*) metaToRam((const char*)curMenu);
-  unpackedMenu->paint();
-  delete unpackedMenu;
+  curUnpackedMenu->paint();
 }
 
 bool MenuStack::processEvents()
 {
-  bool result = false;
+  const MenuTreeItem* nextItem = curUnpackedMenu->processEvents();
 
-  const AbstractMenu* prevMenu = curMenu;
-  const AbstractMenu* unpackedPrev = (AbstractMenu*) metaToRam((const char*)prevMenu);
+  display.clearDisplay();
+  printRaw((const char*)curPackedItem, sizeof(MenuTreeItem), PSTR("CurPacked"));
+  display.display();
+  delay(3000);
 
-  curMenu = unpackedPrev->processEvents();
-
-  if ((!curMenu) || curMenu == unpackedPrev)
+  if (nextItem && nextItem != curPackedItem)
   {
-    curMenu = prevMenu;
-  }
-  else
-  {
-    if (unpackedPrev->child == curMenu)
-        push(prevMenu);
+    printRaw((const char*)nextItem, sizeof(MenuTreeItem), PSTR("nextItem"));
+    display.display();
+    delay(3000);
+    
+    delete curUnpackedItem;
+    delete curUnpackedMenu;
 
-    result = true;
+    curUnpackedItem = unpackItem(nextItem);
+
+//    printRaw((const char*)curUnpackedItem, sizeof(MenuTreeItem), PSTR("nextItem"));
+//    display.display();
+//    delay(3000);
+    
+    curUnpackedMenu = unpackMenu(curUnpackedItem);
+
+    return true;
   }
 
-  delete unpackedPrev;
-  return result;
+  return false;
 }
 

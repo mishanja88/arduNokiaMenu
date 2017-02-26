@@ -4,7 +4,7 @@
 #include "Arduino.h"
 
 // Each typeid capable class should declare constructor by this macro
-#define TYPEID_CONSTRUCTOR(x, parent, ...) constexpr x(__VA_ARGS__) : parent(sizeof(x),
+// #define TYPEID_CONSTRUCTOR(x, parent, ...) constexpr x(__VA_ARGS__) : parent(sizeof(x),
 
 class TypeIdClass
 {

@@ -2,7 +2,7 @@
 #include "SystemState.h"
 
 
-const AbstractMenu* BaseMenu::processEvents() const
+const MenuTreeItem* BaseMenu::processEvents() const
 {
     g_selPos += g_diffSel / 2;
         
@@ -13,6 +13,6 @@ const AbstractMenu* BaseMenu::processEvents() const
     else if(g_volPos > 0xFF)
       g_volPos = 0xFF;
     
-    return this;
+    return nullptr;
 }
 

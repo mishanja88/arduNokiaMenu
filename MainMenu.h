@@ -19,13 +19,13 @@ class MainMenu : public BaseMenu
       wMenuBtn = (1 << 7)
     };
 
-    TYPEID_CONSTRUCTOR(MainMenu, BaseMenu, const AbstractMenu* _child)
-    _child, nullptr)
+    constexpr MainMenu()
+      : BaseMenu(sizeof(MainMenu))  // closing brace opened by macro
     {
     }
 
     void paint() const override;
-    const AbstractMenu* processEvents() const override;
+    const MenuTreeItem* processEvents() const override;
 };
 
 #endif // MAIN_MENU_H

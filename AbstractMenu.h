@@ -3,19 +3,20 @@
 
 #include "Arduino.h"
 #include "TypeId.h"
+#include "TreeItem.h"
+
+class AbstractMenu;
+typedef TreeItem<const AbstractMenu> MenuTreeItem;
 
 class AbstractMenu : public TypeIdClass
 {
   public:
     virtual void paint() const = 0;
-    virtual const AbstractMenu* processEvents() const = 0;
-
-    const PROGMEM AbstractMenu* child;
-    const PROGMEM AbstractMenu* next;
+    virtual const MenuTreeItem* processEvents() const = 0;
 
   protected:
-    constexpr AbstractMenu(const int _typeSize, const AbstractMenu* _child, const AbstractMenu* _next)
-      : TypeIdClass(_typeSize), child(_child), next(_next)
+    constexpr AbstractMenu(const int _typeSize)
+      : TypeIdClass(_typeSize)
     {
     }
 

@@ -9,65 +9,33 @@
 #include "MenuStack.h"
 #include "TreeItem.h"
 
-/*
-#define testMenu(x, y) const char catName2##x[] PROGMEM = "Test2" #x; \
-  PROGMEM CategoryMenu const pmCat2##x (catName2##x, nullptr, &pmCat##y); \
-  \
-  const char catName##x[] PROGMEM = "Test" #x; \
-  PROGMEM CategoryMenu const pmCat##x(catName##x, nullptr, &pmCat2##x);
 
-//------------------------------------------------------------------------
+#define testMenu(x) const char catName##x[] PROGMEM = "Test" #x; \
+  CategoryMenu const PROGMEM pmCat##x(catName##x);
 
-const char catNameZ2[] PROGMEM = "TestZ2";
-PROGMEM CategoryMenu const pmCatZ2(catNameZ2, nullptr, nullptr);
+MainMenu const pmMain PROGMEM; // &pmCatA);
+testMenu(1)
+testMenu(2)
+testMenu(3)
+testMenu(4)
+testMenu(5)
+testMenu(6)
 
-const char catNameZ[] PROGMEM = "TestZ";
-PROGMEM CategoryMenu const pmCatZ(catNameZ, nullptr, &pmCatZ2);
-
-testMenu(Y, Z)
-testMenu(X, Y)
-testMenu(W, X)
-testMenu(V, W)
-testMenu(U, V)
-testMenu(T, U)
-testMenu(S, T)
-testMenu(R, S)
-testMenu(Q, R)
-testMenu(P, Q)
-testMenu(O, P)
-testMenu(N, O)
-testMenu(M, N)
-testMenu(L, M)
-testMenu(K, L)
-testMenu(J, K)
-testMenu(I, J)
-testMenu(H, I)
-testMenu(G, H)
-testMenu(F, G)
-testMenu(E, F)
-testMenu(D, E)
-testMenu(C, D)
-testMenu(B, C)
-testMenu(A, B)
-*/
-
-PROGMEM MainMenu const pmMain(nullptr); // &pmCatA);
-
-#define TI_TOP -1, -1
+#define TI_TOP 0, -1
 
 #define TI_BEGIN false, true
 #define TI_O true, true
 #define TI_END true, false
 
-const TreeItem<int> PROGMEM gTreeArrayItem0((int*) 0xAB00, 0, TI_TOP, TI_BEGIN);
-const TreeItem<int> PROGMEM gTreeArrayItem1((int*) 0xAB01, 1, TI_TOP, TI_O);
-const TreeItem<int> PROGMEM gTreeArrayItem2((int*) 0xAB02, 2, TI_TOP, TI_O);
-const TreeItem<int> PROGMEM gTreeArrayItem3((int*) 0xAB03, 3, TI_TOP, TI_O);
-const TreeItem<int> PROGMEM gTreeArrayItem4((int*) 0xAB04, 4, TI_TOP, TI_O);
-const TreeItem<int> PROGMEM gTreeArrayItem5((int*) 0xAB05, 5, TI_TOP, TI_O);
-const TreeItem<int> PROGMEM gTreeArrayItem6((int*) 0xAB06, 6, TI_TOP, TI_END);
+const MenuTreeItem PROGMEM gTreeArrayItem0((const AbstractMenu*)&pmMain, 0, -1, 1, false, false); // id0, no parent, child is 1, no prev, no next
+const MenuTreeItem PROGMEM gTreeArrayItem1((const AbstractMenu*)&pmCat1, 1, TI_TOP, TI_BEGIN);
+const MenuTreeItem PROGMEM gTreeArrayItem2((const AbstractMenu*)&pmCat2, 2, TI_TOP, TI_O);
+const MenuTreeItem PROGMEM gTreeArrayItem3((const AbstractMenu*)&pmCat3, 3, TI_TOP, TI_O);
+const MenuTreeItem PROGMEM gTreeArrayItem4((const AbstractMenu*)&pmCat4, 4, TI_TOP, TI_O);
+const MenuTreeItem PROGMEM gTreeArrayItem5((const AbstractMenu*)&pmCat5, 5, TI_TOP, TI_O);
+const MenuTreeItem PROGMEM gTreeArrayItem6((const AbstractMenu*)&pmCat6, 6, TI_TOP, TI_END);
 
-const TreeItem<int>* const gTreeArray[] PROGMEM = {
+const MenuTreeItem* const gTreeArray[] PROGMEM = {
     &gTreeArrayItem0,
     &gTreeArrayItem1,
     &gTreeArrayItem2,
@@ -76,7 +44,6 @@ const TreeItem<int>* const gTreeArray[] PROGMEM = {
     &gTreeArrayItem5,
     &gTreeArrayItem6,
 };
-
 
 // Hardware SPI (faster, but must use certain hardware pins):
 // SCK is LCD serial clock (SCLK) - this is pin 13 on Arduino Uno
@@ -186,86 +153,6 @@ void setup() {
 
   delay(2000);
 
-  const TreeItem<int>* it = (const TreeItem<int>*) pgm_read_word(gTreeArray);
-
-  display.clearDisplay();
-
-  for (int i = 0; i < 100; ++i)
-  {
-//    printProgmem(PSTR("it:"));
-  //  display.print((int)it, HEX);
-    //display.display();
-    //delay(1000);
-
-    const TreeItem<int>* unpackedIt = copyToRam< const TreeItem<int> >(it);
-
-    printProgmem(PSTR(","));
-    display.print((int)unpackedIt->data, HEX);
-    display.display();
-    delay(1500);
-
-    if (unpackedIt->next((const TreeItem<int>**)&gTreeArray))
-    {
-      it = unpackedIt->next((const TreeItem<int>**)&gTreeArray);
-      printProgmem(PSTR(">"));
-      //display.print((int)&it, HEX);
-      //display.display();
-      //delay(1000);
-    }
-    else
-    {
-      printProgmem(PSTR("NO_NEXT:"));
-      display.print((int)&it, HEX);
-      display.display();
-      delay(1000);
-
-      delete unpackedIt;
-      break;
-    }
-
-    delete unpackedIt;
-  }
-
-  delay(3000);
-
-  display.clearDisplay();
-
-  for (int i = 0; i < 100; ++i)
-  {
-//    printProgmem(PSTR("it:"));
-  //  display.print((int)it, HEX);
-    //display.display();
-    //delay(1000);
-
-    const TreeItem<int>* unpackedIt = copyToRam< const TreeItem<int> >(it);
-
-    printProgmem(PSTR(","));
-    display.print((int)unpackedIt->data, HEX);
-    display.display();
-    delay(1500);
-
-    if (unpackedIt->prev((const TreeItem<int>**)&gTreeArray))
-    {
-      it = unpackedIt->prev((const TreeItem<int>**)&gTreeArray);
-      printProgmem(PSTR(">"));
-      //display.print((int)&it, HEX);
-      //display.display();
-      //delay(1000);
-    }
-    else
-    {
-      printProgmem(PSTR("NO_PREV:"));
-      display.print((int)&it, HEX);
-      display.display();
-      delay(1000);
-
-      delete unpackedIt;
-      break;
-    }
-
-    delete unpackedIt;
-  }
-    delay(3000);
   // pin change interrupt
   PCMSK2 |= 0xFF; // All pins from 0 to 7 (from PCINT16 to PCINT23)
   PCIFR  |= bit (PCIF2);    // clear any outstanding interrupts
@@ -274,7 +161,7 @@ void setup() {
   g_dirtyWidgets = ~0;
   g_btnEvent = 0;
 
-  g_menuStack.init(&pmMain);
+  g_menuStack.init(gTreeArray);
   digitalWrite(PIN_LED_OUT, LOW);
 }
 
