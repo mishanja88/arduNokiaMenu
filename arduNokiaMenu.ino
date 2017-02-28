@@ -1,3 +1,5 @@
+#include <avr/sleep.h>
+#include <avr/power.h>
 #include <MemoryFree.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
@@ -62,6 +64,35 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(PIN_DISPLAY_DC, 0, PIN_DISPLAY_RESET
 // and written to during SPI transfer.  Be careful sharing these pins!
 
 static const int cBtnHoldFlag = (1 << PIN_BTN_HOLD);
+
+volatile int f_wdt = 1;
+
+ISR(WDT_vect)
+{
+  if (f_wdt == 0)
+  {
+    f_wdt = 1;
+  }
+  else
+  {
+    asm volatile ("  jmp 0");
+  }
+}
+
+void enterSleep(void)
+{
+  set_sleep_mode(SLEEP_MODE_PWR_SAVE);   /* EDIT: could also use SLEEP_MODE_PWR_DOWN for lowest power consumption. */
+  sleep_enable();
+
+  /* Now enter sleep mode. */
+  sleep_mode();
+
+  /* The program will continue from here after the WDT timeout*/
+  sleep_disable(); /* First thing to do is disable sleep. */
+
+  /* Re-enable the peripherals. */
+  power_all_enable();
+}
 
 ISR (PCINT2_vect)
 {
@@ -164,33 +195,26 @@ void setup() {
   PCIFR  |= bit (PCIF2);    // clear any outstanding interrupts
   PCICR  |= bit (PCIE2);    // enable pin change interrupts for D0 to D7
 
+  /*** Setup the WDT ***/
+
+  /* Clear the reset flag. */
+  MCUSR &= ~(1 << WDRF);
+
+  /* In order to change WDE or the prescaler, we need to
+   * set WDCE (This will allow updates for 4 clock cycles).
+   */
+  WDTCSR |= (1 << WDCE) | (1 << WDE);
+
+  /* set new watchdog timeout prescaler value */
+  WDTCSR = 1 << WDP0 | 1 << WDP3; /* 8.0 seconds */
+
+  /* Enable the WD interrupt (note no reset). */
+  WDTCSR |= _BV(WDIE);
+
+
   g_dirtyWidgets = ~0;
   g_btnEvent = 0;
 
-  /*    display.clearDisplay();
-      display.setCursor(0, 0);
-      printRaw((char*)&gTreeArray, 7*sizeof(const MenuTreeItem*), PSTR(":"));
-      display.display();
-
-      g_btnEvent = 0;
-      while (!g_btnEvent)
-      {}
-      g_btnEvent = 0;
-
-    for (int i = 0; i < 7; ++i)
-    {
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print(i);
-      printRaw((const char*)pgm_read_byte(i * sizeof(const MenuTreeItem*) + (char*)&gTreeArray), sizeof(const MenuTreeItem), PSTR(":"));
-      display.display();
-
-      g_btnEvent = 0;
-      while (!g_btnEvent)
-      {}
-      g_btnEvent = 0;
-    }
-  */
   g_menuStack.init((const char*) &gTreeArray);
   digitalWrite(PIN_LED_OUT, LOW);
 }
@@ -198,28 +222,40 @@ void setup() {
 void loop() {
   blinkDebug(1);
 
-  if (g_dirtyWidgets)
+  if (f_wdt)
   {
-    g_menuStack.paint();
+    if (g_dirtyWidgets)
+    {
+      g_menuStack.paint();
 
-    printDebugMem();
+      printDebugMem();
 
-    g_dirtyWidgets = 0;
-  }
+      g_dirtyWidgets = 0;
+    }
 
-  if (g_btnEvent)
-  {
-    if (g_menuStack.processEvents())
-      g_dirtyWidgets = ~0;
+    if (g_btnEvent)
+    {
+      if (g_menuStack.processEvents())
+        g_dirtyWidgets = ~0;
 
-    // debounce
-    if (g_btnEvent > 0x3)
-      delay(100);
+      // debounce
+      if (g_btnEvent > 0x3)
+        delay(100);
 
-    g_btnEvent = 0;
+      g_btnEvent = 0;
 
-    g_diffSel = 0;
-    g_diffVol = 0;
+      g_diffSel = 0;
+      g_diffVol = 0;
+    }
+
+    if ( (!g_btnEvent) && (!g_dirtyWidgets))
+    {
+      /* Don't forget to clear the flag. */
+      f_wdt = 0;
+
+      /* Re-enter sleep mode. */
+      enterSleep();
+    }
   }
 }
 
