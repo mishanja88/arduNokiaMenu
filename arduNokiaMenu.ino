@@ -166,9 +166,6 @@ ISR (PCINT2_vect)
 void setup() {
   analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
-  pinMode(PIN_LED_OUT, OUTPUT);
-  digitalWrite(PIN_LED_OUT, HIGH);
-
   // Initializing all ports 0 - 7
   // (serial is not used)
   for (int i = 0; i <= PIN_DISPLAY_DC; ++i)
@@ -177,6 +174,10 @@ void setup() {
 
   // Display init
   display.begin();
+
+  pinMode(PIN_LED_OUT, OUTPUT);
+  digitalWrite(PIN_LED_OUT, HIGH);
+
   display.setRotation(2);
   display.setContrast(60);
 
@@ -220,42 +221,49 @@ void setup() {
 }
 
 void loop() {
-  blinkDebug(1);
+  // blinkDebug(1);
 
-  if (f_wdt)
+  if (g_dirtyWidgets)
   {
-    if (g_dirtyWidgets)
+    g_menuStack.paint();
+
+    printDebugMem();
+
+    g_dirtyWidgets = 0;
+  }
+
+  if (g_btnEvent)
+  {
+    if (g_menuStack.processEvents())
     {
-      g_menuStack.paint();
-
-      printDebugMem();
-
-      g_dirtyWidgets = 0;
+      g_dirtyWidgets = ~0;
+      /*   delay(100);
+         blinkDebug(3);
+         delay(100);*/
     }
 
-    if (g_btnEvent)
-    {
-      if (g_menuStack.processEvents())
-        g_dirtyWidgets = ~0;
+    // debounce
+    //      if (g_btnEvent > 0x3)
+    //        delay(100);
 
-      // debounce
-      if (g_btnEvent > 0x3)
-        delay(100);
+    g_btnEvent = 0;
 
-      g_btnEvent = 0;
+    g_diffSel = 0;
+    g_diffVol = 0;
+  }
 
-      g_diffSel = 0;
-      g_diffVol = 0;
-    }
+  if ((!g_btnEvent) && (!g_dirtyWidgets))
+  {
+    /* Don't forget to clear the flag. */
+    f_wdt = 0;
 
-    if ( (!g_btnEvent) && (!g_dirtyWidgets))
-    {
-      /* Don't forget to clear the flag. */
-      f_wdt = 0;
+    digitalWrite(PIN_LED_OUT, HIGH);
+    
+    /* Re-enter sleep mode. */
+    enterSleep();
 
-      /* Re-enter sleep mode. */
-      enterSleep();
-    }
+    digitalWrite(PIN_LED_OUT, LOW);
+
   }
 }
 

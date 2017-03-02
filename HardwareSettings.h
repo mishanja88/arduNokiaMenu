@@ -23,7 +23,7 @@ enum PinMappings
   PIN_DISPLAY_DC = 8,
   PIN_DISPLAY_BACKLIGHT = 9,
 
-  PIN_LED_OUT = 16, // A2
+  PIN_LED_OUT = 10, // A2
   PIN_DISPLAY_RESET = 17 // A3
 };
 

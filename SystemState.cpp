@@ -21,9 +21,14 @@ void blinkDebug(int n)
 {
   for (int i = 0; i < n; ++i)
   {
-    digitalWrite(PIN_LED_OUT, HIGH);
-    delay(50);
-    digitalWrite(PIN_LED_OUT, LOW);
-    delay(50);
+    for(int bright = 256; bright >= 0; --bright)
+    {
+      analogWrite(PIN_LED_OUT, bright);
+      delay(1);
+    }
+    //digitalWrite(PIN_LED_OUT, HIGH);
+    //delay(50);
+    //digitalWrite(PIN_LED_OUT, LOW);
+    //delay(50);
   }
 }
