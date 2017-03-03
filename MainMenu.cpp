@@ -84,7 +84,7 @@ const MenuTreeItem* MainMenu::processEvents() const
   if(g_Sys.event.diffVol)
     g_Sys.event.dirtyWidgets |= wMainVol;
 
-  if(hasPinEvent(PIN_BTN_OK))
+  if(g_Sys.hasPinEvent(PIN_BTN_OK))
     return g_menuStack.getChild();
 
   return nullptr;

@@ -212,7 +212,6 @@ void setup() {
   /* Enable the WD interrupt (note no reset). */
   WDTCSR |= _BV(WDIE);
 
-
   g_Sys.event.dirtyWidgets = ~0;
   g_Sys.event.btnEvent = 0;
 
@@ -263,7 +262,6 @@ void loop() {
     enterSleep();
 
     digitalWrite(PIN_LED_OUT, LOW);
-
   }
 }
 

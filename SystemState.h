@@ -10,7 +10,6 @@
 #define EVENT_VOL_MASK 0x03
 #define EVENT_SEL_MASK 0x0C
 
-bool hasPinEvent(PinMappings pin);
 void blinkDebug(int n);
 
 struct EqState
@@ -30,31 +29,37 @@ struct DisplayState
 
 struct EventState
 {
-    //TODO: remove---------------
-    // volatile int g_selPos;
-    // volatile int g_volPos;
-    //---------------------------
+  //TODO: remove---------------
+  // volatile int g_selPos;
+  // volatile int g_volPos;
+  //---------------------------
 
-    // Each bit corresponds to screen widget
-    unsigned char dirtyWidgets;
+  // Each bit corresponds to screen widget
+  unsigned char dirtyWidgets;
 
-    int diffSel;
-    int diffVol;
+  int diffSel;
+  int diffVol;
 
-    unsigned char btnEvent;
-    unsigned char oldPORTD;
+  unsigned char btnEvent;
+  unsigned char oldPORTD;
 };
 
 class SystemState
 {
-public:
+  public:
     SystemState();
-  
-    EqState eq;
-    DisplayState disp;
-    EventState event;
+
+    bool hasPinEvent(PinMappings pin) const;
+    void buttonsClear();
+
+    void widgetsClear();
+    void widgetsDirty();
+
+    volatile EqState eq;
+    volatile DisplayState disp;
+    volatile EventState event;
 };
 
-extern volatile SystemState g_Sys;
+extern SystemState g_Sys;
 
 #endif // SYSTEM_STATE_H

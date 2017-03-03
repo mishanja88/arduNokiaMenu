@@ -58,16 +58,16 @@ const MenuTreeItem* CategoryMenu::processEvents() const
 {
   BaseMenu::processEvents();
 
-  if (hasPinEvent(PIN_BTN_CANCEL))
+  if (g_Sys.hasPinEvent(PIN_BTN_CANCEL))
     return g_menuStack.getParent();
 
-  if (hasPinEvent(PIN_BTN_OK))
+  if (g_Sys.hasPinEvent(PIN_BTN_OK))
     return g_menuStack.getChild();
 
-  if (hasPinEvent(PIN_SEL_DOWN))
+  if (g_Sys.hasPinEvent(PIN_SEL_DOWN))
     return g_menuStack.getNext();
 
-  if (hasPinEvent(PIN_SEL_UP))
+  if (g_Sys.hasPinEvent(PIN_SEL_UP))
     return g_menuStack.getPrev();
 
   return nullptr;
