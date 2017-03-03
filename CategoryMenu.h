@@ -20,15 +20,14 @@ class CategoryMenu : public BaseMenu
     };
 
     constexpr CategoryMenu(const char *_label)
-    : BaseMenu(sizeof(CategoryMenu)), label(_label)
+      : BaseMenu(sizeof(CategoryMenu)), label(_label)
     {
     }
 
     void paint() const override;
-    const MenuTreeItem* processEvents() const override;
 
-    protected:
-      const PROGMEM char *label;
-  };
+  protected:
+    const PROGMEM char *label;
+};
 
 #endif // CATEGORY_MENU_H

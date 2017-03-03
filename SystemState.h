@@ -49,9 +49,11 @@ class SystemState
   public:
     SystemState();
 
-    bool hasPinEvent(PinMappings pin) const;
+    bool hasButtons() const;
+    bool hasPin(PinMappings pin) const;
     void buttonsClear();
 
+    bool hasWidgets() const;
     void widgetsClear();
     void widgetsDirty();
 

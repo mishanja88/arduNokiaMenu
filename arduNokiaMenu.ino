@@ -212,8 +212,8 @@ void setup() {
   /* Enable the WD interrupt (note no reset). */
   WDTCSR |= _BV(WDIE);
 
-  g_Sys.event.dirtyWidgets = ~0;
-  g_Sys.event.btnEvent = 0;
+  // g_Sys.event.dirtyWidgets = ~0;
+  // g_Sys.event.btnEvent = 0;
 
   g_menuStack.init((const char*) &gTreeArray);
   digitalWrite(PIN_LED_OUT, LOW);
@@ -222,36 +222,27 @@ void setup() {
 void loop() {
   // blinkDebug(1);
 
-  if (g_Sys.event.dirtyWidgets)
+  if (g_Sys.hasWidgets())
   {
     g_menuStack.paint();
 
     printDebugMem();
 
-    g_Sys.event.dirtyWidgets = 0;
+    g_Sys.widgetsClear();
   }
 
-  if (g_Sys.event.btnEvent)
+  if (g_Sys.hasButtons())
   {
-    if (g_menuStack.processEvents())
-    {
-      g_Sys.event.dirtyWidgets = ~0;
-      /*   delay(100);
-         blinkDebug(3);
-         delay(100);*/
-    }
+    g_menuStack.processEvents();
 
     // debounce
     if (g_Sys.event.btnEvent > 0x3)
       delay(100);
 
-    g_Sys.event.btnEvent = 0;
-
-    g_Sys.event.diffSel = 0;
-    g_Sys.event.diffVol = 0;
+    g_Sys.buttonsClear();
   }
 
-  if ((!g_Sys.event.btnEvent) && (!g_Sys.event.dirtyWidgets))
+  if ((!g_Sys.hasButtons()) && (!g_Sys.hasWidgets()))
   {
     /* Don't forget to clear the flag. */
     f_wdt = 0;

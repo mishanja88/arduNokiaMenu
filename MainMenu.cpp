@@ -79,13 +79,8 @@ void MainMenu::paint() const
 
 const MenuTreeItem* MainMenu::processEvents() const
 {
-  BaseMenu::processEvents();
-
   if(g_Sys.event.diffVol)
     g_Sys.event.dirtyWidgets |= wMainVol;
 
-  if(g_Sys.hasPinEvent(PIN_BTN_OK))
-    return g_menuStack.getChild();
-
-  return nullptr;
+  return BaseMenu::processEvents();
 }

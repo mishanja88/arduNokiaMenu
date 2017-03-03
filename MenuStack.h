@@ -10,7 +10,7 @@ class MenuStack
 
     void init(const char* _arrayPtr);
     void paint() const;
-    bool processEvents();
+    void processEvents();
 
     inline const MenuTreeItem* getPrev() const {
       return curUnpackedItem ? curUnpackedItem->prev(arrayPtr) : nullptr;

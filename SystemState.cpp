@@ -26,7 +26,17 @@ void SystemState::widgetsDirty()
   event.dirtyWidgets = ~0;
 }
 
-bool SystemState::hasPinEvent(PinMappings pin) const
+bool SystemState::hasButtons() const
+{
+  return event.btnEvent;
+}
+
+bool SystemState::hasWidgets() const
+{
+  return event.dirtyWidgets;
+}
+
+bool SystemState::hasPin(PinMappings pin) const
 {
   return event.btnEvent & (1 << pin);
 }

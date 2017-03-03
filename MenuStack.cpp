@@ -30,7 +30,7 @@ void MenuStack::paint() const
   curUnpackedMenu->paint();
 }
 
-bool MenuStack::processEvents()
+void MenuStack::processEvents()
 {
   const MenuTreeItem* nextItem = curUnpackedMenu->processEvents();
 
@@ -43,10 +43,6 @@ bool MenuStack::processEvents()
     
     curUnpackedItem = unpackItem(nextItem);
     curUnpackedMenu = unpackMenu(curUnpackedItem);
-
-    return true;
   }
-
-  return false;
 }
 

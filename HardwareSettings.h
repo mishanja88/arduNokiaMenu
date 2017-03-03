@@ -18,7 +18,7 @@ enum PinMappings
   
   PIN_BTN_HOLD = 6,
 
-  PIN_RESERVED1 = 7,
+  PIN_BTN_POWER = 7,
 
   PIN_DISPLAY_DC = 8,
   PIN_DISPLAY_BACKLIGHT = 9,

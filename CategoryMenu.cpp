@@ -5,7 +5,6 @@
 #include <Adafruit_PCD8544.h>
 #include "SystemState.h"
 #include "LcdUtil.h"
-#include "MenuStack.h"
 
 extern Adafruit_PCD8544 display;
 
@@ -54,22 +53,4 @@ void CategoryMenu::paint() const
   // display.println("done");
 }
 
-const MenuTreeItem* CategoryMenu::processEvents() const
-{
-  BaseMenu::processEvents();
-
-  if (g_Sys.hasPinEvent(PIN_BTN_CANCEL))
-    return g_menuStack.getParent();
-
-  if (g_Sys.hasPinEvent(PIN_BTN_OK))
-    return g_menuStack.getChild();
-
-  if (g_Sys.hasPinEvent(PIN_SEL_DOWN))
-    return g_menuStack.getNext();
-
-  if (g_Sys.hasPinEvent(PIN_SEL_UP))
-    return g_menuStack.getPrev();
-
-  return nullptr;
-}
 
