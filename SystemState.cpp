@@ -1,20 +1,17 @@
 #include "SystemState.h"
 #include "Arduino.h"
 
-volatile int g_selPos = 0;
-volatile int g_volPos = 0;
+volatile SystemState g_Sys;
 
-volatile int g_diffSel = 0;
-volatile int g_diffVol = 0;
-
-volatile unsigned char g_btnEvent = 0;
-volatile unsigned char g_oldPORTD = 0;
-
-volatile unsigned char g_dirtyWidgets = 0xFF;
+SystemState::SystemState()
+{
+  memset((void *)&g_Sys, 0, sizeof(SystemState));
+  g_Sys.event.dirtyWidgets = 0xFF;
+}
 
 bool hasPinEvent(PinMappings pin)
 {
-  return g_btnEvent & (1 << pin);
+  return g_Sys.event.btnEvent & (1 << pin);
 }
 
 void blinkDebug(int n)

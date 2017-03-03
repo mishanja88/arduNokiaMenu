@@ -103,21 +103,21 @@ ISR (PCINT2_vect)
   static int g_Sel = 0;
 
   g_curPORTD = PIND;
-  g_btnPush = g_oldPORTD ^ g_curPORTD;
+  g_btnPush = g_Sys.event.oldPORTD ^ g_curPORTD;
 
   // Checking hold on press
   if (cBtnHoldFlag & ~g_curPORTD)
   {
     if ((g_btnPush & cBtnHoldFlag))
     {
-      g_btnEvent = cBtnHoldFlag;
+      g_Sys.event.btnEvent = cBtnHoldFlag;
     }
     return;
   }
 
   // Event set only on button release
-  g_btnEvent |= (g_btnPush & ~g_curPORTD);
-  g_btnEvent &= EVENT_BTN_MASK;
+  g_Sys.event.btnEvent |= (g_btnPush & ~g_curPORTD);
+  g_Sys.event.btnEvent &= EVENT_BTN_MASK;
 
 
   // Checking encoder rotation
@@ -129,11 +129,11 @@ ISR (PCINT2_vect)
 
     if (ta ^ (a == b))
     {
-      g_diffVol--;
+      g_Sys.event.diffVol--;
     }
     else
     {
-      g_diffVol++;
+      g_Sys.event.diffVol++;
     }
   }
 
@@ -144,22 +144,22 @@ ISR (PCINT2_vect)
     bool b = g_curPORTD & 0x8;
 
     if (ta ^ (a == b))
-      g_diffSel--;
+      g_Sys.event.diffSel--;
     else
-      g_diffSel++;
+      g_Sys.event.diffSel++;
   }
 
-  if (g_diffVol < 0)
-    g_btnEvent |= 1 << PIN_VOL_DOWN;
-  else if (g_diffVol)
-    g_btnEvent |= 1 << PIN_VOL_UP;
+  if (g_Sys.event.diffVol < 0)
+    g_Sys.event.btnEvent |= 1 << PIN_VOL_DOWN;
+  else if (g_Sys.event.diffVol)
+    g_Sys.event.btnEvent |= 1 << PIN_VOL_UP;
 
-  if (g_diffSel < 0)
-    g_btnEvent |= 1 << PIN_SEL_DOWN;
-  else if (g_diffSel)
-    g_btnEvent |= 1 << PIN_SEL_UP;
+  if (g_Sys.event.diffSel < 0)
+    g_Sys.event.btnEvent |= 1 << PIN_SEL_DOWN;
+  else if (g_Sys.event.diffSel)
+    g_Sys.event.btnEvent |= 1 << PIN_SEL_UP;
 
-  g_oldPORTD = g_curPORTD;
+  g_Sys.event.oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
 
@@ -170,7 +170,7 @@ void setup() {
   // (serial is not used)
   for (int i = 0; i <= PIN_DISPLAY_DC; ++i)
     pinMode(i, INPUT_PULLUP);
-  g_oldPORTD = PORTD;
+  g_Sys.event.oldPORTD = PORTD;
 
   // Display init
   display.begin();
@@ -213,8 +213,8 @@ void setup() {
   WDTCSR |= _BV(WDIE);
 
 
-  g_dirtyWidgets = ~0;
-  g_btnEvent = 0;
+  g_Sys.event.dirtyWidgets = ~0;
+  g_Sys.event.btnEvent = 0;
 
   g_menuStack.init((const char*) &gTreeArray);
   digitalWrite(PIN_LED_OUT, LOW);
@@ -223,42 +223,42 @@ void setup() {
 void loop() {
   // blinkDebug(1);
 
-  if (g_dirtyWidgets)
+  if (g_Sys.event.dirtyWidgets)
   {
     g_menuStack.paint();
 
     printDebugMem();
 
-    g_dirtyWidgets = 0;
+    g_Sys.event.dirtyWidgets = 0;
   }
 
-  if (g_btnEvent)
+  if (g_Sys.event.btnEvent)
   {
     if (g_menuStack.processEvents())
     {
-      g_dirtyWidgets = ~0;
+      g_Sys.event.dirtyWidgets = ~0;
       /*   delay(100);
          blinkDebug(3);
          delay(100);*/
     }
 
     // debounce
-    //      if (g_btnEvent > 0x3)
-    //        delay(100);
+    if (g_Sys.event.btnEvent > 0x3)
+      delay(100);
 
-    g_btnEvent = 0;
+    g_Sys.event.btnEvent = 0;
 
-    g_diffSel = 0;
-    g_diffVol = 0;
+    g_Sys.event.diffSel = 0;
+    g_Sys.event.diffVol = 0;
   }
 
-  if ((!g_btnEvent) && (!g_dirtyWidgets))
+  if ((!g_Sys.event.btnEvent) && (!g_Sys.event.dirtyWidgets))
   {
     /* Don't forget to clear the flag. */
     f_wdt = 0;
 
     digitalWrite(PIN_LED_OUT, HIGH);
-    
+
     /* Re-enter sleep mode. */
     enterSleep();
 
