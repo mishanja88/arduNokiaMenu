@@ -69,14 +69,38 @@ volatile int f_wdt = 1;
 
 ISR(WDT_vect)
 {
-  digitalWrite(PIN_LED_OUT, LOW);
-  delay(500);
-  digitalWrite(PIN_LED_OUT, HIGH);
-  delay(500);
-  digitalWrite(PIN_LED_OUT, LOW);
-  delay(100);
-  digitalWrite(PIN_LED_OUT, HIGH);
-  delay(100);
+  float result = analogRead(0);
+
+  for(int i=0; i<10;++i)
+  {
+    delay(10);
+    result = (result + analogRead(0)) / 2;
+  }
+
+  static const float adc3v3 = 510.7;
+  static const float adc5v = 781.875;
+
+  static const float ka = (5.08 - 3.32) / ( adc5v - adc3v3);
+  static const float kb = 5.08 - ka * adc5v;
+
+  float voltage = ka * result + kb;
+
+  display.clearDisplay();
+  
+  printProgmem(PSTR("ADC result:"));
+  display.println();
+  display.println(result);
+
+  printProgmem(PSTR("Voltage:"));
+  display.println();
+  display.println(voltage);
+
+  display.display();
+
+  for (int i = 0; i < 100; ++i)
+    delay(1000);
+
+  g_Sys.widgetsDirty();
 
   if (f_wdt == 0)
   {
@@ -171,7 +195,6 @@ ISR (PCINT2_vect)
   g_Sys.event.oldPORTD = g_curPORTD;
 }  // end of PCINT2_vect
 
-
 void setup() {
   analogWrite(PIN_DISPLAY_BACKLIGHT, 0);
 
@@ -187,7 +210,7 @@ void setup() {
   pinMode(PIN_LED_OUT, OUTPUT);
   digitalWrite(PIN_LED_OUT, HIGH);
 
-  display.setRotation(2);
+  //  display.setRotation(2);
   display.setContrast(60);
 
   display.clearDisplay();
